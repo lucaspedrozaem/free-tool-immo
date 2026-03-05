@@ -59,15 +59,15 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.png"
               alt="MLS Photo Tools"
-              width={34}
-              height={34}
+              width={38}
+              height={38}
               className="rounded-lg"
             />
-            <span className="font-heading font-bold text-xl text-midnight">
+            <span className="font-heading font-bold text-xl text-midnight leading-none">
               MLS<span className="bg-gradient-to-r from-primary to-primary-end bg-clip-text text-transparent">Photo</span>Tools
             </span>
           </Link>
