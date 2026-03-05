@@ -39,6 +39,8 @@ const toolCategories = [
     tools: [
       { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
       { name: "Agent Branding Bar", href: "/agent-branding-bar" },
+      { name: "Agent Intro/Outro Card", href: "/agent-intro-card" },
+      { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos" },
       { name: "Status Overlays", href: "/listing-status-overlays" },
       { name: "Photo Grid Maker", href: "/photo-grid-maker" },
       { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
