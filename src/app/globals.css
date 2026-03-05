@@ -29,11 +29,6 @@ h1, h2, h3 {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
-}
-
-body {
-  overflow-x: hidden;
 }
 
 /* Prevent images from overflowing containers */
