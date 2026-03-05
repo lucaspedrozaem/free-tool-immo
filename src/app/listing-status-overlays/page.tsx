@@ -45,7 +45,7 @@ const faqItems = [
   {
     question: "Can I batch-apply to multiple photos?",
     answer:
-      "Yes! Upload up to 50 listing photos and apply the same status ribbon to all of them at once. Download everything as a ZIP file — perfect for creating a consistent social media series.",
+      "Yes! Upload up to 50 listing photos and apply the same status ribbon to all of them at once. Download everything as a ZIP file - perfect for creating a consistent social media series.",
   },
   {
     question: "Are my photos uploaded to a server?",
@@ -390,7 +390,7 @@ export default function ListingStatusOverlaysPage() {
               Professional Status Overlays for Real Estate Social Media
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Every real estate transaction milestone is a marketing opportunity. &ldquo;Just Listed&rdquo; photos generate buyer interest. &ldquo;Just Sold&rdquo; photos build your track record. &ldquo;Under Contract&rdquo; and &ldquo;Price Reduced&rdquo; photos keep your listings visible. Instead of designing these overlays from scratch in Canva, this tool applies professional status ribbons to your listing photos in one click — batch process your entire listing in seconds.
+              Every real estate transaction milestone is a marketing opportunity. &ldquo;Just Listed&rdquo; photos generate buyer interest. &ldquo;Just Sold&rdquo; photos build your track record. &ldquo;Under Contract&rdquo; and &ldquo;Price Reduced&rdquo; photos keep your listings visible. Instead of designing these overlays from scratch in Canva, this tool applies professional status ribbons to your listing photos in one click - batch process your entire listing in seconds.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

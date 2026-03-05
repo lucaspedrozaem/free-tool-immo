@@ -15,15 +15,15 @@ export default function HeicToJpgConverterPage() {
     <ToolPageLayout
       illustration="/illustrations/tool-heic-to-jpg.jpg"
       title="HEIC to JPG Converter"
-      subtitle="Convert iPhone HEIC photos to universally compatible JPGs — right in your browser. No uploads, no accounts, 100% free."
-      description="Our free HEIC to JPG converter is built specifically for real estate professionals who receive iPhone photos from clients, photographers, and colleagues. HEIC files are not supported by most MLS systems, listing platforms, or email clients. This tool converts them to standard JPG format instantly in your browser — no cloud upload, no file size limits, and no account required."
+      subtitle="Convert iPhone HEIC photos to universally compatible JPGs - right in your browser. No uploads, no accounts, 100% free."
+      description="Our free HEIC to JPG converter is built specifically for real estate professionals who receive iPhone photos from clients, photographers, and colleagues. HEIC files are not supported by most MLS systems, listing platforms, or email clients. This tool converts them to standard JPG format instantly in your browser - no cloud upload, no file size limits, and no account required."
       whyTitle="Stop Dealing with HEIC Compatibility Issues"
-      whyContent="Every real estate agent has been there: a client sends property photos from their iPhone, and the files are in HEIC format. Your MLS won't accept them. Your email client can't preview them. Your listing platform rejects them. You waste 15 minutes searching for a converter, uploading files to a sketchy website, and downloading them one by one. With this free tool, you drag and drop your HEIC files, choose your settings, and download perfectly converted JPGs — all without your photos ever leaving your computer."
+      whyContent="Every real estate agent has been there: a client sends property photos from their iPhone, and the files are in HEIC format. Your MLS won't accept them. Your email client can't preview them. Your listing platform rejects them. You waste 15 minutes searching for a converter, uploading files to a sketchy website, and downloading them one by one. With this free tool, you drag and drop your HEIC files, choose your settings, and download perfectly converted JPGs - all without your photos ever leaving your computer."
       howTitle="How to Convert HEIC to JPG"
       howSteps={[
-        "Upload your HEIC/HEIF photos — drag and drop or click to browse. Batch convert as many as you need.",
-        "Choose your settings — adjust quality, strip EXIF data for privacy, and optionally resize to specific dimensions.",
-        "Download your JPGs — get all your converted photos in one click, ready for MLS, email, or any listing platform.",
+        "Upload your HEIC/HEIF photos - drag and drop or click to browse. Batch convert as many as you need.",
+        "Choose your settings - adjust quality, strip EXIF data for privacy, and optionally resize to specific dimensions.",
+        "Download your JPGs - get all your converted photos in one click, ready for MLS, email, or any listing platform.",
       ]}
       complianceNote="This tool performs format conversion and optional utility edits (resizing, EXIF removal) entirely in your browser. No image data is uploaded to any server. Adjusting quality or dimensions for MLS compatibility is a standard utility edit, not a material alteration of listing photos."
       internalLink={{
@@ -39,7 +39,7 @@ export default function HeicToJpgConverterPage() {
         {
           question: "Why do iPhones save photos as HEIC instead of JPG?",
           answer:
-            "Apple switched to HEIC because it saves significant storage space — a HEIC file is typically 40-50% smaller than an equivalent JPG. This means your iPhone can store roughly twice as many photos. However, HEIC is not universally supported outside of Apple's ecosystem, which creates compatibility problems when sharing photos.",
+            "Apple switched to HEIC because it saves significant storage space - a HEIC file is typically 40-50% smaller than an equivalent JPG. This means your iPhone can store roughly twice as many photos. However, HEIC is not universally supported outside of Apple's ecosystem, which creates compatibility problems when sharing photos.",
         },
         {
           question:
@@ -61,7 +61,7 @@ export default function HeicToJpgConverterPage() {
         {
           question: "Can I convert HEIC files on Windows or Android?",
           answer:
-            "Yes. This browser-based tool works on any device with a modern web browser — Windows, Mac, Android, Chromebook, or Linux. You do not need any special software or plugins installed. Simply open this page and drop your HEIC files.",
+            "Yes. This browser-based tool works on any device with a modern web browser - Windows, Mac, Android, Chromebook, or Linux. You do not need any special software or plugins installed. Simply open this page and drop your HEIC files.",
         },
       ]}
       acceptFormats={{

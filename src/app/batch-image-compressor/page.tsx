@@ -13,15 +13,15 @@ export default function BatchImageCompressorPage() {
     <ToolPageLayout
       illustration="/illustrations/tool-compressor.jpg"
       title="Compress Real Estate Photos in Bulk"
-      subtitle="Reduce listing photo file sizes to meet MLS upload limits — without visible quality loss."
-      description="Our free batch image compressor is built for real estate professionals who need to quickly reduce photo file sizes for MLS, Zillow, Realtor.com, and other listing platforms. All compression happens locally in your browser — your photos are never uploaded to any server, keeping unreleased listings completely private."
+      subtitle="Reduce listing photo file sizes to meet MLS upload limits - without visible quality loss."
+      description="Our free batch image compressor is built for real estate professionals who need to quickly reduce photo file sizes for MLS, Zillow, Realtor.com, and other listing platforms. All compression happens locally in your browser - your photos are never uploaded to any server, keeping unreleased listings completely private."
       whyTitle="Stop Getting MLS Photo Rejections Due to File Size"
-      whyContent="Most MLS systems enforce strict file size limits — typically 5MB or less per photo. High-resolution DSLR and drone photos regularly exceed these limits, forcing agents to manually compress each image one by one. Our batch compressor lets you drag in an entire shoot and compress every photo to your target size in seconds, so you can get listings live faster without the tedious back-and-forth of rejected uploads."
+      whyContent="Most MLS systems enforce strict file size limits - typically 5MB or less per photo. High-resolution DSLR and drone photos regularly exceed these limits, forcing agents to manually compress each image one by one. Our batch compressor lets you drag in an entire shoot and compress every photo to your target size in seconds, so you can get listings live faster without the tedious back-and-forth of rejected uploads."
       howTitle="How to Compress Your Listing Photos"
       howSteps={[
         "Upload your listing photos by dragging them into the dropzone or clicking to browse.",
         "Set your target file size, quality level, and whether to strip EXIF metadata.",
-        "Click Compress and download all your optimized photos — ready for MLS upload.",
+        "Click Compress and download all your optimized photos - ready for MLS upload.",
       ]}
       internalLink={{
         text: "Need to resize photos to specific MLS dimensions? Try our MLS Photo Resizer",
@@ -36,7 +36,7 @@ export default function BatchImageCompressorPage() {
         {
           question: "How does the compression work?",
           answer:
-            "Our compressor re-encodes your photos as optimized JPEGs using your browser's built-in canvas API. It iteratively adjusts quality to hit your target file size while preserving as much visual detail as possible. No data is sent to any server — everything runs locally on your device.",
+            "Our compressor re-encodes your photos as optimized JPEGs using your browser's built-in canvas API. It iteratively adjusts quality to hit your target file size while preserving as much visual detail as possible. No data is sent to any server - everything runs locally on your device.",
         },
         {
           question: "What is the maximum file size for MLS photo uploads?",

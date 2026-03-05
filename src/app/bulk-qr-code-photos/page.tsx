@@ -355,7 +355,7 @@ export default function BulkQrCodePage() {
               Why Add a QR Code to Listing Photos?
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              QR codes on listing photos make it effortless for potential buyers to access more information. Link to your property listing page, virtual tour, contact card, or website. When agents share photos on social media, email, or print materials, every viewer can scan the code instantly — turning passive scrollers into active leads.
+              QR codes on listing photos make it effortless for potential buyers to access more information. Link to your property listing page, virtual tour, contact card, or website. When agents share photos on social media, email, or print materials, every viewer can scan the code instantly - turning passive scrollers into active leads.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

@@ -272,7 +272,7 @@ export default function AgentBrandingBarPage() {
                 Agent Branding Bar
               </h1>
               <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                Add your name, phone, brokerage, profile photo, and QR code to every listing photo in seconds. Professional branding bar — batch apply to 50+ photos.
+                Add your name, phone, brokerage, profile photo, and QR code to every listing photo in seconds. Professional branding bar - batch apply to 50+ photos.
               </p>
               <div className="mt-8">
                 <PhotoDropzone onFiles={handleFiles} />
@@ -582,7 +582,7 @@ export default function AgentBrandingBarPage() {
               Brand Your Listing Photos in Seconds
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Every listing photo you share on social media, email, or your website is a branding opportunity. Instead of manually adding your info in Canva or Photoshop, this tool lets you batch-apply a professional branding bar to all your listing photos at once. Your name, phone, brokerage, profile photo, and QR code are displayed in a clean bar — ensuring every viewer knows how to reach you.
+              Every listing photo you share on social media, email, or your website is a branding opportunity. Instead of manually adding your info in Canva or Photoshop, this tool lets you batch-apply a professional branding bar to all your listing photos at once. Your name, phone, brokerage, profile photo, and QR code are displayed in a clean bar - ensuring every viewer knows how to reach you.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

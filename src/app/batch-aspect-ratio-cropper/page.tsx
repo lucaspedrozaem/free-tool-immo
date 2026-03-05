@@ -15,12 +15,12 @@ import { downloadAsZip, downloadSingleImage, formatFileSize } from "@/lib/image-
 type AppState = "upload" | "configure" | "processing" | "done";
 
 const ASPECT_PRESETS = [
-  { label: "4:3 — MLS Standard", ratio: 4 / 3 },
-  { label: "3:2 — DSLR Photos", ratio: 3 / 2 },
-  { label: "16:9 — Widescreen / Presentations", ratio: 16 / 9 },
-  { label: "1:1 — Instagram Square", ratio: 1 },
-  { label: "9:16 — Instagram Stories / TikTok", ratio: 9 / 16 },
-  { label: "3:4 — Portrait MLS", ratio: 3 / 4 },
+  { label: "4:3 - MLS Standard", ratio: 4 / 3 },
+  { label: "3:2 - DSLR Photos", ratio: 3 / 2 },
+  { label: "16:9 - Widescreen / Presentations", ratio: 16 / 9 },
+  { label: "1:1 - Instagram Square", ratio: 1 },
+  { label: "9:16 - Instagram Stories / TikTok", ratio: 9 / 16 },
+  { label: "3:4 - Portrait MLS", ratio: 3 / 4 },
   { label: "Custom", ratio: 0 },
 ];
 
@@ -33,7 +33,7 @@ const faqItems = [
   {
     question: "Will cropping reduce image quality?",
     answer:
-      "No. This tool performs a lossless center-crop — it simply trims the edges to match your target ratio. The remaining pixels are untouched. The output is saved at 92% JPG quality, which is visually identical to the original.",
+      "No. This tool performs a lossless center-crop - it simply trims the edges to match your target ratio. The remaining pixels are untouched. The output is saved at 92% JPG quality, which is visually identical to the original.",
   },
   {
     question: "Can I crop multiple photos at once?",
@@ -43,7 +43,7 @@ const faqItems = [
   {
     question: "What's the difference between cropping and resizing?",
     answer:
-      "Cropping removes pixels from the edges to change the shape (aspect ratio) of the image. Resizing changes the overall dimensions while keeping the same shape. This tool does both — it center-crops to your target ratio, then optionally resizes to specific pixel dimensions.",
+      "Cropping removes pixels from the edges to change the shape (aspect ratio) of the image. Resizing changes the overall dimensions while keeping the same shape. This tool does both - it center-crops to your target ratio, then optionally resizes to specific pixel dimensions.",
   },
   {
     question: "Are my photos uploaded to a server?",
@@ -178,7 +178,7 @@ export default function BatchAspectRatioCropperPage() {
                 Batch Aspect Ratio Cropper
               </h1>
               <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                Center-crop all your listing photos to the exact aspect ratio your MLS requires. 4:3, 16:9, 1:1, or custom — batch process up to 50 photos.
+                Center-crop all your listing photos to the exact aspect ratio your MLS requires. 4:3, 16:9, 1:1, or custom - batch process up to 50 photos.
               </p>
               <div className="mt-8">
                 <PhotoDropzone onFiles={handleFiles} />
@@ -286,7 +286,7 @@ export default function BatchAspectRatioCropperPage() {
                   <strong>
                     {ASPECT_PRESETS[presetIndex].ratio === 0
                       ? `${customW}:${customH}`
-                      : ASPECT_PRESETS[presetIndex].label.split(" — ")[0]}
+                      : ASPECT_PRESETS[presetIndex].label.split(" - ")[0]}
                   </strong>{" "}
                   aspect ratio
                   {enableMaxWidth && ` (max ${maxWidth}px wide)`}
@@ -316,7 +316,7 @@ export default function BatchAspectRatioCropperPage() {
               Why Aspect Ratio Matters for Real Estate Photos
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Every MLS and listing platform has specific aspect ratio requirements. Photos that don&apos;t match get stretched, letterboxed, or rejected entirely. The most common requirement is 4:3 for MLS uploads and 16:9 for presentation-quality hero images. Instead of manually cropping each photo in Photoshop, this tool batch-processes your entire listing in seconds — center-cropping each image to the perfect ratio.
+              Every MLS and listing platform has specific aspect ratio requirements. Photos that don&apos;t match get stretched, letterboxed, or rejected entirely. The most common requirement is 4:3 for MLS uploads and 16:9 for presentation-quality hero images. Instead of manually cropping each photo in Photoshop, this tool batch-processes your entire listing in seconds - center-cropping each image to the perfect ratio.
             </p>
           </div>
 
@@ -326,9 +326,9 @@ export default function BatchAspectRatioCropperPage() {
             </h2>
             <ol className="space-y-3">
               {[
-                "Upload your listing photos — drag and drop up to 50 images at once.",
-                "Select your target aspect ratio — choose a preset (4:3 for MLS, 1:1 for Instagram) or enter a custom ratio.",
-                "Download your cropped photos — get perfectly formatted images ready for upload.",
+                "Upload your listing photos - drag and drop up to 50 images at once.",
+                "Select your target aspect ratio - choose a preset (4:3 for MLS, 1:1 for Instagram) or enter a custom ratio.",
+                "Download your cropped photos - get perfectly formatted images ready for upload.",
               ].map((step, i) => (
                 <li key={i} className="flex gap-3">
                   <span className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">

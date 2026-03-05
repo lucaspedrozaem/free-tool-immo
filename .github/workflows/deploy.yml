@@ -42,8 +42,8 @@ jobs:
           script: |
             # Only use HTTPS config if SSL cert exists
             if [ -f /etc/letsencrypt/live/mlsphototools.com/fullchain.pem ]; then
-              echo "SSL cert found — using HTTPS config"
+              echo "SSL cert found - using HTTPS config"
             else
-              echo "No SSL cert yet — run setup-ssl.sh first"
+              echo "No SSL cert yet - run setup-ssl.sh first"
             fi
             nginx -t && systemctl reload nginx

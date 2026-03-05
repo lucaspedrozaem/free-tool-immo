@@ -8,12 +8,12 @@ const faqItems = [
   {
     question: "What size is the flyer?",
     answer:
-      "The flyer is generated at 2550x3300 pixels, which is equivalent to 8.5x11 inches at 300 DPI — perfect for printing at home or at a print shop.",
+      "The flyer is generated at 2550x3300 pixels, which is equivalent to 8.5x11 inches at 300 DPI - perfect for printing at home or at a print shop.",
   },
   {
     question: "Can I use this for Just Listed or Price Reduced flyers?",
     answer:
-      "Yes! The flyer headline is customizable — use 'Open House', 'Just Listed', 'Price Reduced', or any text you want. The clean design works for any listing announcement.",
+      "Yes! The flyer headline is customizable - use 'Open House', 'Just Listed', 'Price Reduced', or any text you want. The clean design works for any listing announcement.",
   },
   {
     question: "Can I upload multiple photos at once?",
@@ -310,12 +310,12 @@ export default function OpenHouseFlyerGeneratorPage() {
                 />
               </div>
 
-              {/* Photo strip — drag to reorder */}
+              {/* Photo strip - drag to reorder */}
               {photos.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <p className="text-xs text-gray-500">
-                      Drag to reorder — first = hero
+                      Drag to reorder - first = hero
                     </p>
                     <button
                       onClick={() => {
@@ -555,7 +555,7 @@ export default function OpenHouseFlyerGeneratorPage() {
               Create Open House Flyers Without Canva
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Every open house needs a professional flyer — but designing one shouldn&apos;t take 30 minutes in Canva. This tool generates a clean, print-ready listing flyer in seconds. Upload all your photos at once, drag to reorder, customize colors, and download a beautiful 8.5x11 flyer ready for printing.
+              Every open house needs a professional flyer - but designing one shouldn&apos;t take 30 minutes in Canva. This tool generates a clean, print-ready listing flyer in seconds. Upload all your photos at once, drag to reorder, customize colors, and download a beautiful 8.5x11 flyer ready for printing.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

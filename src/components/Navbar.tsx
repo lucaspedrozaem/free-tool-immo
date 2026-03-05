@@ -72,7 +72,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav — each category as its own dropdown */}
+          {/* Desktop Nav - each category as its own dropdown */}
           <div className="hidden lg:flex items-center gap-1">
             {toolCategories.map((category) => (
               <div
@@ -161,7 +161,7 @@ export function Navbar() {
           </button>
         </div>
 
-        {/* Mobile menu — accordion by category */}
+        {/* Mobile menu - accordion by category */}
         {mobileOpen && (
           <div className="lg:hidden pb-4">
             <div className="space-y-1">

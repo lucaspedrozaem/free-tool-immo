@@ -15,15 +15,15 @@ export default function OnlineImageResizerPage() {
     <ToolPageLayout
       illustration="/illustrations/tool-image-resizer.jpg"
       title="Resize Photos to Any Dimension"
-      subtitle="Batch resize images to exact pixel dimensions — perfect for web, social media, and listing platforms."
-      description="Our free online image resizer lets you batch resize photos to any custom dimension. Whether you need MLS-compliant 1920x1080 photos, social media graphics, or web-optimized images, simply set your target dimensions and download perfectly sized photos in seconds. All processing happens in your browser — no uploads, no sign-ups, no limits."
+      subtitle="Batch resize images to exact pixel dimensions - perfect for web, social media, and listing platforms."
+      description="Our free online image resizer lets you batch resize photos to any custom dimension. Whether you need MLS-compliant 1920x1080 photos, social media graphics, or web-optimized images, simply set your target dimensions and download perfectly sized photos in seconds. All processing happens in your browser - no uploads, no sign-ups, no limits."
       whyTitle="Perfectly Sized Photos Every Time"
       whyContent="Different platforms require different image dimensions. MLS systems want 1920x1080, Zillow prefers specific ratios, and social media platforms each have their own requirements. Instead of opening each photo in an editor and manually resizing, our batch resizer lets you set dimensions once and apply them to your entire photo set in one click. Save hours of tedious manual work on every listing."
       howTitle="How to Resize Your Photos"
       howSteps={[
         "Upload your photos by dragging them into the dropzone or clicking to browse.",
         "Set your target width and height, choose an output format, and adjust quality.",
-        "Click Resize and download all your perfectly sized photos — ready to use anywhere.",
+        "Click Resize and download all your perfectly sized photos - ready to use anywhere.",
       ]}
       internalLink={{
         text: "Need to reduce file sizes for MLS uploads? Try our Batch Image Compressor",

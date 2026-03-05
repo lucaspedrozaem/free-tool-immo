@@ -26,7 +26,7 @@ export default function BatchWatermarkPhotosPage() {
       illustration="/illustrations/tool-watermark.jpg"
       title="Batch Watermark Real Estate Photos"
       subtitle="Protect your listing photography by adding custom watermarks to multiple images at once. 100% free, runs in your browser."
-      description="Our free batch watermark tool lets real estate agents and photographers protect their listing images in seconds. Add your agency name, logo text, or copyright notice to dozens of property photos at once. Choose the perfect placement, opacity, and size so your watermark protects without distracting from the listing. Everything runs locally in your browser — your photos are never uploaded to any server."
+      description="Our free batch watermark tool lets real estate agents and photographers protect their listing images in seconds. Add your agency name, logo text, or copyright notice to dozens of property photos at once. Choose the perfect placement, opacity, and size so your watermark protects without distracting from the listing. Everything runs locally in your browser - your photos are never uploaded to any server."
       whyTitle="Protect Your Listing Photography Investment"
       whyContent="Professional real estate photography is a significant investment. Without watermarks, your listing photos can be stolen and reused by competitors, scraped by third-party sites, or shared without attribution. Adding a tasteful watermark to your property images ensures your brand stays attached to your work, deters unauthorized use, and helps potential clients find their way back to you. Batch processing saves you hours compared to watermarking photos one at a time in Photoshop or Canva."
       howTitle="How to Batch Watermark Your Photos"

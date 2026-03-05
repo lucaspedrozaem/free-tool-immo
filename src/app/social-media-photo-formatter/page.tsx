@@ -16,16 +16,16 @@ type AppState = "upload" | "configure" | "processing" | "done";
 type FillMode = "blur" | "black" | "white" | "brand" | "crop";
 
 const CANVAS_PRESETS = [
-  { label: "9:16 — Stories / TikTok", width: 1080, height: 1920 },
-  { label: "4:5 — Instagram Post", width: 1080, height: 1350 },
-  { label: "1:1 — Instagram Square", width: 1080, height: 1080 },
+  { label: "9:16 - Stories / TikTok", width: 1080, height: 1920 },
+  { label: "4:5 - Instagram Post", width: 1080, height: 1350 },
+  { label: "1:1 - Instagram Square", width: 1080, height: 1080 },
 ];
 
 const faqItems = [
   {
     question: "Why do my listing photos look bad on Instagram Stories?",
     answer:
-      "Instagram Stories use a 9:16 vertical format (1080x1920px). When you share a horizontal listing photo, Instagram either crops out the sides or adds ugly black bars. This tool places your full photo on a vertical canvas with a professional blurred background — no cropping needed.",
+      "Instagram Stories use a 9:16 vertical format (1080x1920px). When you share a horizontal listing photo, Instagram either crops out the sides or adds ugly black bars. This tool places your full photo on a vertical canvas with a professional blurred background - no cropping needed.",
   },
   {
     question: "What's the blurred background effect?",
@@ -174,7 +174,7 @@ export default function SocialMediaFormatterPage() {
                 9:16 Social Media Photo Formatter
               </h1>
               <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                Convert horizontal listing photos to vertical format for Instagram Stories, TikTok, and Reels — with a professional blurred background. No cropping.
+                Convert horizontal listing photos to vertical format for Instagram Stories, TikTok, and Reels - with a professional blurred background. No cropping.
               </p>
               <div className="mt-8">
                 <PhotoDropzone onFiles={handleFiles} />
@@ -281,7 +281,7 @@ export default function SocialMediaFormatterPage() {
               Make Listing Photos Work on Instagram Stories & TikTok
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Real estate photos are almost always horizontal (landscape orientation). But Instagram Stories, TikTok, Reels, and YouTube Shorts all use a vertical 9:16 format. Simply uploading a horizontal photo means Instagram will crop out the best parts of your listing. This tool solves the problem by placing your full photo on a vertical canvas with a beautiful blurred background — keeping every detail visible while looking professionally formatted.
+              Real estate photos are almost always horizontal (landscape orientation). But Instagram Stories, TikTok, Reels, and YouTube Shorts all use a vertical 9:16 format. Simply uploading a horizontal photo means Instagram will crop out the best parts of your listing. This tool solves the problem by placing your full photo on a vertical canvas with a beautiful blurred background - keeping every detail visible while looking professionally formatted.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

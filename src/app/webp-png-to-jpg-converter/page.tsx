@@ -16,14 +16,14 @@ export default function WebpPngToJpgConverterPage() {
       illustration="/illustrations/tool-webp-png-to-jpg.jpg"
       title="WebP & PNG to JPG Converter"
       subtitle="Batch convert WebP, PNG, and AVIF images to universally compatible JPG format. 100% free, runs in your browser."
-      description="Most MLS systems and listing platforms require JPG format for photo uploads. If your photographer delivers WebP or PNG files, or your phone saves in a newer format, this tool instantly converts them to standard JPG — no cloud upload, no account, no limits. Designed for real estate professionals who need fast, reliable format conversion."
+      description="Most MLS systems and listing platforms require JPG format for photo uploads. If your photographer delivers WebP or PNG files, or your phone saves in a newer format, this tool instantly converts them to standard JPG - no cloud upload, no account, no limits. Designed for real estate professionals who need fast, reliable format conversion."
       whyTitle="Why Convert to JPG for Real Estate Listings?"
       whyContent="JPG (JPEG) is the universal standard for real estate listing photos. While WebP and PNG are great formats, most MLS systems, Zillow, Realtor.com, and other listing platforms require or prefer JPG. WebP files are commonly downloaded from websites or delivered by virtual tour software, and PNG files often come from screenshots or graphic design tools. Converting to JPG ensures your listing photos are accepted everywhere, every time."
       howTitle="How to Convert WebP & PNG to JPG"
       howSteps={[
-        "Upload your WebP, PNG, or AVIF photos — drag and drop or click to browse. Batch convert up to 50 images at once.",
-        "Adjust quality settings — set JPG quality, optionally strip EXIF data for privacy, and resize if needed.",
-        "Download your JPGs — get all converted photos in one click as a ZIP file, ready for MLS upload.",
+        "Upload your WebP, PNG, or AVIF photos - drag and drop or click to browse. Batch convert up to 50 images at once.",
+        "Adjust quality settings - set JPG quality, optionally strip EXIF data for privacy, and resize if needed.",
+        "Download your JPGs - get all converted photos in one click as a ZIP file, ready for MLS upload.",
       ]}
       complianceNote="This tool performs format conversion and optional utility edits (resizing, EXIF removal) entirely in your browser. No image data is uploaded to any server. Format conversion is a standard utility operation, not a material alteration of listing photos."
       internalLink={{
@@ -39,7 +39,7 @@ export default function WebpPngToJpgConverterPage() {
         {
           question: "Does converting from PNG to JPG reduce quality?",
           answer:
-            "PNG is a lossless format, so converting to JPG (lossy) will introduce a very small quality reduction. At 92% quality, the difference is virtually imperceptible for real estate photos. The benefit is a dramatically smaller file size — often 5-10x smaller.",
+            "PNG is a lossless format, so converting to JPG (lossy) will introduce a very small quality reduction. At 92% quality, the difference is virtually imperceptible for real estate photos. The benefit is a dramatically smaller file size - often 5-10x smaller.",
         },
         {
           question: "Can I convert multiple files at once?",

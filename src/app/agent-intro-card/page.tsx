@@ -10,17 +10,17 @@ const faqItems = [
   {
     question: "What is an agent intro/outro card?",
     answer:
-      "An intro/outro card is a professional contact slide used at the beginning or end of listing photo slideshows, virtual tours, and video walkthroughs. It displays your headshot, name, phone, brokerage, and website — so viewers always know how to contact you.",
+      "An intro/outro card is a professional contact slide used at the beginning or end of listing photo slideshows, virtual tours, and video walkthroughs. It displays your headshot, name, phone, brokerage, and website - so viewers always know how to contact you.",
   },
   {
     question: "What sizes are available?",
     answer:
-      "Cards are generated at 1920x1080 (16:9 landscape) — perfect for video intros, slideshows, MLS photo sets, and social media. The high resolution ensures crisp quality on any screen.",
+      "Cards are generated at 1920x1080 (16:9 landscape) - perfect for video intros, slideshows, MLS photo sets, and social media. The high resolution ensures crisp quality on any screen.",
   },
   {
     question: "Can I add my headshot and brokerage logo?",
     answer:
-      "Yes! Upload a headshot photo that appears on the right side of the card, and optionally a brokerage logo that appears at the bottom left. Both are optional — the card looks professional with or without them.",
+      "Yes! Upload a headshot photo that appears on the right side of the card, and optionally a brokerage logo that appears at the bottom left. Both are optional - the card looks professional with or without them.",
   },
   {
     question: "Can I customize the colors?",
@@ -246,7 +246,7 @@ export default function AgentIntroCardPage() {
               Agent Intro / Outro Card
             </h1>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-              Create a professional contact card for listing slideshows, video intros, and social media. Your headshot, details, and branding — in one stunning card.
+              Create a professional contact card for listing slideshows, video intros, and social media. Your headshot, details, and branding - in one stunning card.
             </p>
           </div>
 
@@ -501,7 +501,7 @@ export default function AgentIntroCardPage() {
               Professional Agent Cards for Every Listing
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Use your agent intro card as the first or last slide in a listing photo slideshow, the opening frame of a virtual tour video, or a standalone social media post. The card includes your headshot, contact information, and brokerage branding — everything a potential buyer needs to reach you. Customize the colors to match your personal brand and generate a high-resolution 1920x1080 image ready for any platform.
+              Use your agent intro card as the first or last slide in a listing photo slideshow, the opening frame of a virtual tour video, or a standalone social media post. The card includes your headshot, contact information, and brokerage branding - everything a potential buyer needs to reach you. Customize the colors to match your personal brand and generate a high-resolution 1920x1080 image ready for any platform.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

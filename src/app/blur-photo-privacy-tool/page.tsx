@@ -23,7 +23,7 @@ const faqItems = [
   {
     question: "Does this use AI to detect faces?",
     answer:
-      "No. This is a simple manual brush tool — you paint over the areas you want to blur. This gives you full control over exactly what gets blurred. No AI, no cloud processing, no privacy concerns.",
+      "No. This is a simple manual brush tool - you paint over the areas you want to blur. This gives you full control over exactly what gets blurred. No AI, no cloud processing, no privacy concerns.",
   },
   {
     question: "Are my photos uploaded to a server?",
@@ -237,7 +237,7 @@ export default function BlurPhotoPrivacyPage() {
               Privacy Blur Tool for Listing Photos
             </h1>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-              Paint over license plates, faces, security pads, and personal items to blur them out. No Photoshop needed — free and runs in your browser.
+              Paint over license plates, faces, security pads, and personal items to blur them out. No Photoshop needed - free and runs in your browser.
             </p>
           </div>
 
@@ -343,7 +343,7 @@ export default function BlurPhotoPrivacyPage() {
               Protect Privacy in Your Listing Photos
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Real estate photos often capture sensitive details that should be obscured before publishing: license plates, faces of neighbors, security keypads, alarm codes, personal photos on walls, and computer screens. Rather than re-shooting or spending time in Photoshop, this tool lets you quickly paint over sensitive areas with a pixelation brush — right in your browser. No software to install, no account required, and your photos never leave your device.
+              Real estate photos often capture sensitive details that should be obscured before publishing: license plates, faces of neighbors, security keypads, alarm codes, personal photos on walls, and computer screens. Rather than re-shooting or spending time in Photoshop, this tool lets you quickly paint over sensitive areas with a pixelation brush - right in your browser. No software to install, no account required, and your photos never leave your device.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

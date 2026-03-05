@@ -23,7 +23,7 @@ const faqItems = [
   {
     question: "What's the best grid for a listing teaser?",
     answer:
-      "The 2x2 grid is the most popular for listing teasers — it lets you showcase the exterior, kitchen, bathroom, and a key feature room in a single image. The 3x1 horizontal strip is great for Facebook posts and email headers.",
+      "The 2x2 grid is the most popular for listing teasers - it lets you showcase the exterior, kitchen, bathroom, and a key feature room in a single image. The 3x1 horizontal strip is great for Facebook posts and email headers.",
   },
   {
     question: "Can I adjust the border width?",
@@ -258,7 +258,7 @@ export default function PhotoGridMakerPage() {
               Click or drag & drop to upload photos
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              Upload all photos at once — reorder below by dragging
+              Upload all photos at once - reorder below by dragging
             </p>
             <input
               ref={fileInputRef}
@@ -273,14 +273,14 @@ export default function PhotoGridMakerPage() {
             />
           </div>
 
-          {/* Photo Strip — drag to reorder */}
+          {/* Photo Strip - drag to reorder */}
           {images.length > 0 && (
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-semibold text-gray-700">
                   {images.length} photo{images.length !== 1 ? "s" : ""} uploaded
                   {images.length > config.count && (
-                    <span className="text-gray-400 font-normal"> — first {config.count} will be used</span>
+                    <span className="text-gray-400 font-normal"> - first {config.count} will be used</span>
                   )}
                 </p>
                 <button onClick={handleReset} className="text-xs text-gray-400 hover:text-red-500">
@@ -398,7 +398,7 @@ export default function PhotoGridMakerPage() {
               Why Use a Photo Grid for Listings?
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              A well-designed photo grid lets potential buyers see the highlights of a property at a glance. Instead of scrolling through dozens of photos, a single grid image showcases the best rooms — exterior, kitchen, bathroom, and a key living area. Photo grids are perfect for Instagram posts, Facebook ads, email campaigns, and MLS teaser images that grab attention and generate inquiries.
+              A well-designed photo grid lets potential buyers see the highlights of a property at a glance. Instead of scrolling through dozens of photos, a single grid image showcases the best rooms - exterior, kitchen, bathroom, and a key living area. Photo grids are perfect for Instagram posts, Facebook ads, email campaigns, and MLS teaser images that grab attention and generate inquiries.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">

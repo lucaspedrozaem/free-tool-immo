@@ -711,7 +711,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Tools Grid — organized by category */}
+      {/* Tools Grid - organized by category */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-heading font-bold text-3xl text-center mb-3">
