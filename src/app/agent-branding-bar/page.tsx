@@ -19,12 +19,12 @@ const faqItems = [
   {
     question: "What information can I put on the branding bar?",
     answer:
-      "You can add your name, phone number, email, brokerage name, and website URL. The bar displays this contact info in a clean, professional layout at the bottom or top of each listing photo.",
+      "You can add your name, phone number, email, brokerage name, website URL, a profile photo (headshot), and a QR code. All fields except agent name are optional.",
   },
   {
     question: "Can I add my headshot or logo?",
     answer:
-      "Logo upload is coming soon. Currently the tool supports text-based branding with your name, phone, and brokerage. This ensures the bar stays clean and legible on any photo.",
+      "Yes! You can upload a profile photo that appears as a circle on the left side of the branding bar. You can also upload a QR code image that appears on the right side, perfect for linking to your website or listing page.",
   },
   {
     question: "Will this affect MLS compliance?",
@@ -43,6 +43,22 @@ const faqItems = [
   },
 ];
 
+function drawCircleImage(
+  ctx: OffscreenCanvasRenderingContext2D,
+  img: ImageBitmap,
+  x: number,
+  y: number,
+  size: number
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(img, x, y, size, size);
+  ctx.restore();
+}
+
 async function applyBrandingBar(
   file: File,
   config: {
@@ -53,6 +69,8 @@ async function applyBrandingBar(
     position: BarPosition;
     style: BarStyle;
     brandColor: string;
+    profileBitmap: ImageBitmap | null;
+    qrBitmap: ImageBitmap | null;
   }
 ): Promise<ProcessedImage> {
   const bitmap = await createImageBitmap(file);
@@ -83,29 +101,54 @@ async function applyBrandingBar(
   const fontSize = Math.max(14, Math.round(barHeight * 0.32));
   const smallFontSize = Math.max(11, Math.round(barHeight * 0.22));
   const padding = Math.round(bitmap.width * 0.02);
+  const avatarSize = Math.round(barHeight * 0.7);
+  const avatarMargin = Math.round(barHeight * 0.15);
 
-  // Agent name (left side)
+  // Profile photo (left side, circular)
+  let textStartX = padding;
+  if (config.profileBitmap) {
+    const avatarX = padding;
+    const avatarY = barY + avatarMargin;
+    drawCircleImage(ctx, config.profileBitmap, avatarX, avatarY, avatarSize);
+    textStartX = padding + avatarSize + Math.round(padding * 0.8);
+  }
+
+  // QR code (right side)
+  let rightEdge = bitmap.width - padding;
+  if (config.qrBitmap) {
+    const qrSize = Math.round(barHeight * 0.75);
+    const qrX = bitmap.width - padding - qrSize;
+    const qrY = barY + Math.round((barHeight - qrSize) / 2);
+    // White background for QR readability
+    ctx.fillStyle = "#FFFFFF";
+    const qrPad = Math.round(qrSize * 0.06);
+    ctx.fillRect(qrX - qrPad, qrY - qrPad, qrSize + qrPad * 2, qrSize + qrPad * 2);
+    ctx.drawImage(config.qrBitmap, qrX, qrY, qrSize, qrSize);
+    rightEdge = qrX - padding;
+  }
+
+  // Agent name (left side, after avatar)
   ctx.fillStyle = textColor;
-  ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+  ctx.font = `bold ${fontSize}px 'DM Sans', Inter, sans-serif`;
   ctx.textBaseline = "middle";
   const nameY = barY + barHeight * 0.38;
-  ctx.fillText(config.agentName, padding, nameY);
+  ctx.fillText(config.agentName, textStartX, nameY);
 
   // Brokerage (below name)
   if (config.brokerage) {
     ctx.fillStyle = subTextColor;
-    ctx.font = `${smallFontSize}px Inter, sans-serif`;
-    ctx.fillText(config.brokerage, padding, barY + barHeight * 0.7);
+    ctx.font = `${smallFontSize}px 'DM Sans', Inter, sans-serif`;
+    ctx.fillText(config.brokerage, textStartX, barY + barHeight * 0.7);
   }
 
-  // Phone & website (right side)
+  // Phone & website (right side, before QR)
   ctx.textBaseline = "middle";
   const rightInfo = [config.phone, config.website].filter(Boolean);
   ctx.fillStyle = textColor;
-  ctx.font = `${smallFontSize}px Inter, sans-serif`;
+  ctx.font = `${smallFontSize}px 'DM Sans', Inter, sans-serif`;
   rightInfo.forEach((text, i) => {
     const w = ctx.measureText(text).width;
-    const x = bitmap.width - padding - w;
+    const x = rightEdge - w;
     const y = barY + barHeight * (rightInfo.length === 1 ? 0.5 : 0.35 + i * 0.3);
     ctx.fillText(text, x, y);
   });
@@ -119,7 +162,7 @@ async function applyBrandingBar(
     originalName: file.name,
     newName: `${baseName}-branded.jpg`,
     blob,
-    width: bitmap.width,
+    width: canvas.width,
     height: totalH,
     originalSize: file.size,
     newSize: blob.size,
@@ -141,16 +184,47 @@ export default function AgentBrandingBarPage() {
   const [website, setWebsite] = useState("");
   const [position, setPosition] = useState<BarPosition>("bottom");
   const [barStyle, setBarStyle] = useState<BarStyle>("dark");
-  const [brandColor, setBrandColor] = useState("#2563EB");
+  const [brandColor, setBrandColor] = useState("#0165bf");
+
+  // Profile photo
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const profileInputRef = useRef<HTMLInputElement>(null);
+
+  // QR code
+  const [qrFile, setQrFile] = useState<File | null>(null);
+  const [qrPreview, setQrPreview] = useState<string | null>(null);
+  const qrInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = useCallback((newFiles: File[]) => {
     setFiles(newFiles);
     setState("configure");
   }, []);
 
+  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setProfileFile(file);
+    setProfilePreview(URL.createObjectURL(file));
+  };
+
+  const handleQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setQrFile(file);
+    setQrPreview(URL.createObjectURL(file));
+  };
+
   const handleProcess = async () => {
     if (!agentName.trim()) return;
     setState("processing");
+
+    // Pre-load profile and QR bitmaps once
+    let profileBitmap: ImageBitmap | null = null;
+    let qrBitmap: ImageBitmap | null = null;
+    if (profileFile) profileBitmap = await createImageBitmap(profileFile);
+    if (qrFile) qrBitmap = await createImageBitmap(qrFile);
+
     const processed: ProcessedImage[] = [];
     for (let i = 0; i < files.length; i++) {
       setProgress({
@@ -158,9 +232,14 @@ export default function AgentBrandingBarPage() {
       });
       const result = await applyBrandingBar(files[i], {
         agentName, phone, brokerage, website, position, style: barStyle, brandColor,
+        profileBitmap, qrBitmap,
       });
       processed.push(result);
     }
+
+    if (profileBitmap) profileBitmap.close();
+    if (qrBitmap) qrBitmap.close();
+
     setResults(processed);
     setState("done");
   };
@@ -181,7 +260,7 @@ export default function AgentBrandingBarPage() {
                 Agent Branding Bar
               </h1>
               <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                Add your name, phone, and brokerage to every listing photo in seconds. Professional branding bar — batch apply to 50+ photos.
+                Add your name, phone, brokerage, profile photo, and QR code to every listing photo in seconds. Professional branding bar — batch apply to 50+ photos.
               </p>
               <div className="mt-8">
                 <PhotoDropzone onFiles={handleFiles} />
@@ -246,6 +325,80 @@ export default function AgentBrandingBarPage() {
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
                     />
                   </div>
+
+                  {/* Profile Photo & QR Code */}
+                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1.5">Profile Photo</label>
+                      <input
+                        ref={profileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfileUpload}
+                        className="hidden"
+                      />
+                      {profilePreview ? (
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={profilePreview}
+                            alt="Profile"
+                            className="w-12 h-12 rounded-full object-cover border-2 border-primary/30"
+                          />
+                          <button
+                            onClick={() => {
+                              setProfileFile(null);
+                              setProfilePreview(null);
+                            }}
+                            className="text-xs text-gray-400 hover:text-red-500"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => profileInputRef.current?.click()}
+                          className="w-full border-2 border-dashed border-gray-200 rounded-lg py-3 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors"
+                        >
+                          + Upload headshot
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1.5">QR Code</label>
+                      <input
+                        ref={qrInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleQrUpload}
+                        className="hidden"
+                      />
+                      {qrPreview ? (
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={qrPreview}
+                            alt="QR Code"
+                            className="w-12 h-12 rounded object-contain border border-gray-200 bg-white"
+                          />
+                          <button
+                            onClick={() => {
+                              setQrFile(null);
+                              setQrPreview(null);
+                            }}
+                            className="text-xs text-gray-400 hover:text-red-500"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => qrInputRef.current?.click()}
+                          className="w-full border-2 border-dashed border-gray-200 rounded-lg py-3 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors"
+                        >
+                          + Upload QR code
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Style Options */}
@@ -306,35 +459,88 @@ export default function AgentBrandingBarPage() {
                   )}
 
                   {/* Preview */}
-                  <div className="mt-4 rounded-lg overflow-hidden border border-gray-200">
-                    <div className="bg-gray-200 h-24 flex items-center justify-center text-xs text-gray-400">
-                      Photo Preview
-                    </div>
-                    <div
-                      className="px-3 py-2 flex items-center justify-between"
-                      style={{
-                        backgroundColor:
-                          barStyle === "dark" ? "rgba(0,0,0,0.85)"
-                          : barStyle === "light" ? "rgba(255,255,255,0.92)"
-                          : brandColor,
-                      }}
-                    >
-                      <div>
-                        <p className={`text-sm font-bold ${barStyle === "light" ? "text-gray-800" : "text-white"}`}>
-                          {agentName || "Your Name"}
-                        </p>
-                        <p className={`text-xs ${barStyle === "light" ? "text-gray-500" : "text-white/70"}`}>
-                          {brokerage || "Your Brokerage"}
-                        </p>
+                  <div className="mt-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Preview</label>
+                    <div className="rounded-lg overflow-hidden border border-gray-200">
+                      {position === "top" && (
+                        <div
+                          className="px-3 py-2 flex items-center justify-between"
+                          style={{
+                            backgroundColor:
+                              barStyle === "dark" ? "rgba(0,0,0,0.85)"
+                              : barStyle === "light" ? "rgba(255,255,255,0.92)"
+                              : brandColor,
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            {profilePreview && (
+                              <img src={profilePreview} alt="" className="w-8 h-8 rounded-full object-cover" />
+                            )}
+                            <div>
+                              <p className={`text-sm font-bold ${barStyle === "light" ? "text-gray-800" : "text-white"}`}>
+                                {agentName || "Your Name"}
+                              </p>
+                              <p className={`text-xs ${barStyle === "light" ? "text-gray-500" : "text-white/70"}`}>
+                                {brokerage || "Your Brokerage"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-right">
+                              <p className={`text-xs ${barStyle === "light" ? "text-gray-700" : "text-white"}`}>
+                                {phone || "(555) 123-4567"}
+                              </p>
+                              <p className={`text-xs ${barStyle === "light" ? "text-gray-700" : "text-white"}`}>
+                                {website || "www.yoursite.com"}
+                              </p>
+                            </div>
+                            {qrPreview && (
+                              <img src={qrPreview} alt="" className="w-8 h-8 rounded bg-white p-0.5 object-contain" />
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      <div className="bg-gray-200 h-24 flex items-center justify-center text-xs text-gray-400">
+                        Photo Preview
                       </div>
-                      <div className="text-right">
-                        <p className={`text-xs ${barStyle === "light" ? "text-gray-700" : "text-white"}`}>
-                          {phone || "(555) 123-4567"}
-                        </p>
-                        <p className={`text-xs ${barStyle === "light" ? "text-gray-700" : "text-white"}`}>
-                          {website || "www.yoursite.com"}
-                        </p>
-                      </div>
+                      {position === "bottom" && (
+                        <div
+                          className="px-3 py-2 flex items-center justify-between"
+                          style={{
+                            backgroundColor:
+                              barStyle === "dark" ? "rgba(0,0,0,0.85)"
+                              : barStyle === "light" ? "rgba(255,255,255,0.92)"
+                              : brandColor,
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            {profilePreview && (
+                              <img src={profilePreview} alt="" className="w-8 h-8 rounded-full object-cover" />
+                            )}
+                            <div>
+                              <p className={`text-sm font-bold ${barStyle === "light" ? "text-gray-800" : "text-white"}`}>
+                                {agentName || "Your Name"}
+                              </p>
+                              <p className={`text-xs ${barStyle === "light" ? "text-gray-500" : "text-white/70"}`}>
+                                {brokerage || "Your Brokerage"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-right">
+                              <p className={`text-xs ${barStyle === "light" ? "text-gray-700" : "text-white"}`}>
+                                {phone || "(555) 123-4567"}
+                              </p>
+                              <p className={`text-xs ${barStyle === "light" ? "text-gray-700" : "text-white"}`}>
+                                {website || "www.yoursite.com"}
+                              </p>
+                            </div>
+                            {qrPreview && (
+                              <img src={qrPreview} alt="" className="w-8 h-8 rounded bg-white p-0.5 object-contain" />
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -364,7 +570,7 @@ export default function AgentBrandingBarPage() {
               Brand Your Listing Photos in Seconds
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              Every listing photo you share on social media, email, or your website is a branding opportunity. Instead of manually adding your info in Canva or Photoshop, this tool lets you batch-apply a professional branding bar to all your listing photos at once. Your name, phone, brokerage, and website are displayed in a clean bar at the bottom of each photo — ensuring every viewer knows how to reach you.
+              Every listing photo you share on social media, email, or your website is a branding opportunity. Instead of manually adding your info in Canva or Photoshop, this tool lets you batch-apply a professional branding bar to all your listing photos at once. Your name, phone, brokerage, profile photo, and QR code are displayed in a clean bar — ensuring every viewer knows how to reach you.
             </p>
           </div>
           <div className="bg-primary-light rounded-lg p-4">
