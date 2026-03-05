@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -18,6 +19,18 @@ export default function GuideCALaw() {
           </Link>{" "}
           &rarr; Guides &rarr; California Digital Photo Law Compliance
         </nav>
+
+        <div className="text-center mb-8">
+            <Image
+              src="/illustrations/guide-ca-law.jpg"
+              alt=""
+              width={700}
+              height={394}
+              className="mx-auto rounded-2xl"
+              priority
+            />
+          </div>
+          
 
         <h1 className="font-heading font-extrabold text-3xl md:text-4xl text-midnight leading-tight">
           California&apos;s 2025 Digital Photo Law: What Real Estate Agents Need

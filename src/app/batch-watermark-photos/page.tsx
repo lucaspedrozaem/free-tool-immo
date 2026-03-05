@@ -23,6 +23,7 @@ export default function BatchWatermarkPhotosPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-watermark.jpg"
       title="Batch Watermark Real Estate Photos"
       subtitle="Protect your listing photography by adding custom watermarks to multiple images at once. 100% free, runs in your browser."
       description="Our free batch watermark tool lets real estate agents and photographers protect their listing images in seconds. Add your agency name, logo text, or copyright notice to dozens of property photos at once. Choose the perfect placement, opacity, and size so your watermark protects without distracting from the listing. Everything runs locally in your browser — your photos are never uploaded to any server."

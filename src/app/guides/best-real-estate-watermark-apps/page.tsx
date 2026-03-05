@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -17,6 +18,18 @@ export default function GuideBestWatermarkApps() {
           </Link>{" "}
           &rarr; Guides &rarr; Best Real Estate Watermark Apps
         </nav>
+
+        <div className="text-center mb-8">
+            <Image
+              src="/illustrations/guide-watermark-apps.jpg"
+              alt=""
+              width={700}
+              height={394}
+              className="mx-auto rounded-2xl"
+              priority
+            />
+          </div>
+          
 
         <h1 className="font-heading font-extrabold text-3xl md:text-4xl text-midnight leading-tight">
           Best Real Estate Watermark Apps in 2026: Free & Paid Options Compared

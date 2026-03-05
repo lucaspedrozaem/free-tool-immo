@@ -29,6 +29,7 @@ export default function MlsPhotoResizerPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-mls-resizer.jpg"
       title="Resize Photos for MLS in Seconds"
       subtitle="Instantly batch resize listing photos to meet exact MLS, Zillow, and Realtor.com size requirements. 100% free, runs in your browser."
       description="Every MLS and listing portal has specific photo size requirements, and uploading images that don't meet them leads to rejected uploads, cropped photos, or degraded quality. Our free MLS photo resizer lets you batch resize dozens of listing photos at once to the exact dimensions required by your MLS, Zillow, Realtor.com, and other platforms. Choose a preset or enter custom dimensions, optionally compress to stay under file size limits, and download your perfectly formatted photos in seconds. Everything runs locally in your browser — your photos are never uploaded to any server."

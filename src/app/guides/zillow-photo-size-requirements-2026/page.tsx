@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -17,6 +18,18 @@ export default function GuideZillowRequirements() {
           </Link>{" "}
           &rarr; Guides &rarr; Zillow Photo Size Requirements 2026
         </nav>
+
+        <div className="text-center mb-8">
+            <Image
+              src="/illustrations/guide-zillow-requirements.jpg"
+              alt=""
+              width={700}
+              height={394}
+              className="mx-auto rounded-2xl"
+              priority
+            />
+          </div>
+          
 
         <h1 className="font-heading font-extrabold text-3xl md:text-4xl text-midnight leading-tight">
           Zillow Photo Size Requirements 2026: Everything You Need to Know

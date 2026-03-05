@@ -13,6 +13,7 @@ export default function OnlineImageResizerPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-image-resizer.jpg"
       title="Resize Photos to Any Dimension"
       subtitle="Batch resize images to exact pixel dimensions — perfect for web, social media, and listing platforms."
       description="Our free online image resizer lets you batch resize photos to any custom dimension. Whether you need MLS-compliant 1920x1080 photos, social media graphics, or web-optimized images, simply set your target dimensions and download perfectly sized photos in seconds. All processing happens in your browser — no uploads, no sign-ups, no limits."

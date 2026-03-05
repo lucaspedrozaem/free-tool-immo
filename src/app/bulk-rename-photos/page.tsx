@@ -21,6 +21,7 @@ export default function BulkRenamePhotosPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-bulk-rename.jpg"
       title="Bulk Rename Listing Photos for SEO"
       subtitle="Rename your real estate photos with SEO-friendly, address-based file names in seconds. Boost search visibility for every listing."
       description="Search engines use file names as a ranking signal when indexing images. Photos named IMG_4532.jpg tell Google nothing about the property, while 123-Main-Street-01.jpg clearly signals the listing address and helps your photos appear in image search results. Our free bulk rename tool converts generic camera file names into clean, keyword-rich, address-based names that improve your listing's SEO without any manual work."

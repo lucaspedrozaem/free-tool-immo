@@ -13,6 +13,7 @@ export default function WebpPngToJpgConverterPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-webp-png-to-jpg.jpg"
       title="WebP & PNG to JPG Converter"
       subtitle="Batch convert WebP, PNG, and AVIF images to universally compatible JPG format. 100% free, runs in your browser."
       description="Most MLS systems and listing platforms require JPG format for photo uploads. If your photographer delivers WebP or PNG files, or your phone saves in a newer format, this tool instantly converts them to standard JPG — no cloud upload, no account, no limits. Designed for real estate professionals who need fast, reliable format conversion."

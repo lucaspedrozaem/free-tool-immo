@@ -5,6 +5,7 @@ import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
+import Image from "next/image";
 import Link from "next/link";
 import type {
   ProcessingOptions,
@@ -32,6 +33,7 @@ interface ToolPageLayoutProps {
   ) => React.ReactNode;
   dropzoneDescription?: string;
   acceptFormats?: Record<string, string[]>;
+  illustration?: string;
 }
 
 export function ToolPageLayout({
@@ -48,6 +50,7 @@ export function ToolPageLayout({
   renderConfig,
   dropzoneDescription,
   acceptFormats,
+  illustration,
 }: ToolPageLayoutProps) {
   const [state, setState] = useState<AppState>("upload");
   const [files, setFiles] = useState<File[]>([]);
@@ -88,6 +91,18 @@ export function ToolPageLayout({
         <div className="max-w-4xl mx-auto">
           {state === "upload" && (
             <div className="text-center">
+              {illustration && (
+                <div className="mb-8">
+                  <Image
+                    src={illustration}
+                    alt={title}
+                    width={320}
+                    height={240}
+                    className="mx-auto rounded-2xl"
+                    priority
+                  />
+                </div>
+              )}
               <h1 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl text-midnight leading-tight">
                 {title}
               </h1>

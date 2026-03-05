@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
-
+import Image from "next/image";
 type GridLayout = "2x2" | "2x1" | "1x2" | "3x1" | "1x3";
 
 const GRID_CONFIGS: Record<GridLayout, { cols: number; rows: number; count: number }> = {
@@ -182,6 +182,17 @@ export default function PhotoGridMakerPage() {
       <section className="py-10 md:py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
+            <div className="text-center mb-6">
+                <Image
+                  src="/illustrations/tool-photo-grid.jpg"
+                  alt=""
+                  width={320}
+                  height={240}
+                  className="mx-auto rounded-2xl"
+                  priority
+                />
+              </div>
+              
             <h1 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl text-midnight leading-tight">
               Listing Photo Grid Maker
             </h1>

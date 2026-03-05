@@ -48,6 +48,7 @@ export default function ZillowPhotoFormatterPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-zillow-formatter.jpg"
       title="Format Photos for Zillow & Realtor.com"
       subtitle="Auto-resize and compress listing photos to meet platform-specific requirements. Never get a photo rejection again."
       description="Zillow, Realtor.com, Redfin, and Homes.com each have specific photo upload requirements including minimum dimensions, maximum file sizes, and preferred aspect ratios. Manually formatting photos for each platform wastes valuable time. Our free Zillow Photo Formatter automatically detects and applies the correct settings for your chosen platform, including resizing to the optimal dimensions, compressing below the file size limit, and stripping EXIF metadata for privacy."

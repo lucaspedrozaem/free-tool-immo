@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -21,6 +22,18 @@ export default function GuideResizeForMLS() {
           </Link>{" "}
           &rarr; How to Resize Photos for MLS
         </nav>
+
+        <div className="text-center mb-8">
+            <Image
+              src="/illustrations/guide-mls-resize.jpg"
+              alt=""
+              width={700}
+              height={394}
+              className="mx-auto rounded-2xl"
+              priority
+            />
+          </div>
+          
 
         <h1 className="font-heading font-extrabold text-3xl md:text-4xl text-midnight leading-tight">
           How to Resize Photos for the MLS: The Complete 2026 Guide

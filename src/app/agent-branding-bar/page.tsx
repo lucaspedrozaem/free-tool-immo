@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useCallback, useRef } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
@@ -256,6 +257,17 @@ export default function AgentBrandingBarPage() {
         <div className="max-w-4xl mx-auto">
           {state === "upload" && (
             <div className="text-center">
+              <div className="text-center mb-6">
+                <Image
+                  src="/illustrations/tool-branding-bar.jpg"
+                  alt=""
+                  width={320}
+                  height={240}
+                  className="mx-auto rounded-2xl"
+                  priority
+                />
+              </div>
+              
               <h1 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl text-midnight leading-tight">
                 Agent Branding Bar
               </h1>

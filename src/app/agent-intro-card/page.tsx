@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
-
+import Image from "next/image";
 type CardStyle = "dark" | "light" | "brand";
 
 const faqItems = [
@@ -231,6 +231,17 @@ export default function AgentIntroCardPage() {
       <section className="py-10 md:py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
+            <div className="text-center mb-6">
+                <Image
+                  src="/illustrations/tool-intro-card.jpg"
+                  alt=""
+                  width={320}
+                  height={240}
+                  className="mx-auto rounded-2xl"
+                  priority
+                />
+              </div>
+              
             <h1 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl text-midnight leading-tight">
               Agent Intro / Outro Card
             </h1>

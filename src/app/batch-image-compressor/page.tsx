@@ -11,6 +11,7 @@ export default function BatchImageCompressorPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-compressor.jpg"
       title="Compress Real Estate Photos in Bulk"
       subtitle="Reduce listing photo file sizes to meet MLS upload limits — without visible quality loss."
       description="Our free batch image compressor is built for real estate professionals who need to quickly reduce photo file sizes for MLS, Zillow, Realtor.com, and other listing platforms. All compression happens locally in your browser — your photos are never uploaded to any server, keeping unreleased listings completely private."

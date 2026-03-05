@@ -9,6 +9,7 @@ export default function RemoveExifDataPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-remove-exif.jpg"
       title="Remove EXIF Data from Listing Photos"
       subtitle="Strip GPS coordinates, camera info, and hidden metadata from your real estate photos to protect seller and tenant privacy."
       description="EXIF data is embedded in every digital photo and can include the exact GPS coordinates where the photo was taken, the camera model, date and time, and even the software used to edit it. When you upload listing photos with EXIF data intact, you may inadvertently expose the property's exact location before the listing goes live, or reveal private details about the seller's daily routine. Our free EXIF remover strips all metadata in your browser — your photos never leave your device."

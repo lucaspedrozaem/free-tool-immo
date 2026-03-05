@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useCallback } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
@@ -11,7 +12,6 @@ import type {
   ProcessingProgress,
 } from "@/lib/image-processing";
 import { downloadAsZip, downloadSingleImage, formatFileSize } from "@/lib/image-processing";
-
 type AppState = "upload" | "configure" | "processing" | "done";
 
 const ASPECT_PRESETS = [
@@ -163,6 +163,17 @@ export default function BatchAspectRatioCropperPage() {
         <div className="max-w-4xl mx-auto">
           {state === "upload" && (
             <div className="text-center">
+              <div className="text-center mb-6">
+                <Image
+                  src="/illustrations/tool-aspect-ratio.jpg"
+                  alt=""
+                  width={320}
+                  height={240}
+                  className="mx-auto rounded-2xl"
+                  priority
+                />
+              </div>
+              
               <h1 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl text-midnight leading-tight">
                 Batch Aspect Ratio Cropper
               </h1>

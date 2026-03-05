@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useCallback } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
@@ -158,6 +159,17 @@ export default function SocialMediaFormatterPage() {
         <div className="max-w-4xl mx-auto">
           {state === "upload" && (
             <div className="text-center">
+              <div className="text-center mb-6">
+                <Image
+                  src="/illustrations/tool-social-media.jpg"
+                  alt=""
+                  width={320}
+                  height={240}
+                  className="mx-auto rounded-2xl"
+                  priority
+                />
+              </div>
+              
               <h1 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl text-midnight leading-tight">
                 9:16 Social Media Photo Formatter
               </h1>

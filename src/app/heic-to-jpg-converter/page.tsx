@@ -13,6 +13,7 @@ export default function HeicToJpgConverterPage() {
 
   return (
     <ToolPageLayout
+      illustration="/illustrations/tool-heic-to-jpg.jpg"
       title="HEIC to JPG Converter"
       subtitle="Convert iPhone HEIC photos to universally compatible JPGs — right in your browser. No uploads, no accounts, 100% free."
       description="Our free HEIC to JPG converter is built specifically for real estate professionals who receive iPhone photos from clients, photographers, and colleagues. HEIC files are not supported by most MLS systems, listing platforms, or email clients. This tool converts them to standard JPG format instantly in your browser — no cloud upload, no file size limits, and no account required."

@@ -5,6 +5,7 @@ import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
+import Image from "next/image";
 import Link from "next/link";
 import type {
   ProcessingOptions,
@@ -59,6 +60,13 @@ const toolCategories = [
     ],
   },
 ];
+
+const categoryIllustrations: Record<string, string> = {
+  "Convert & Format": "/illustrations/category-convert.jpg",
+  "Resize & Crop": "/illustrations/category-resize.jpg",
+  "Privacy & Cleanup": "/illustrations/category-privacy.jpg",
+  "Brand & Market": "/illustrations/category-brand.jpg",
+};
 
 const faqItems = [
   {
@@ -194,7 +202,17 @@ export default function HomePage() {
                 photos instantly. Runs completely in your browser for
                 ultimate privacy.
               </p>
-              <div className="mt-10">
+              <div className="mt-8 mb-10">
+                <Image
+                  src="/illustrations/hero-main.jpg"
+                  alt="Real estate agent processing listing photos"
+                  width={800}
+                  height={450}
+                  className="mx-auto rounded-2xl"
+                  priority
+                />
+              </div>
+              <div className="mt-6">
                 <PhotoDropzone onFiles={handleFiles} />
               </div>
             </>
@@ -543,6 +561,103 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-heading font-bold text-3xl text-center mb-3">
+            How It Works
+          </h2>
+          <p className="text-gray-500 text-center mb-14 max-w-lg mx-auto">
+            Three simple steps to MLS-ready listing photos.
+          </p>
+          <div className="grid md:grid-cols-3 gap-10">
+            <div className="text-center">
+              <div className="bg-primary-light rounded-2xl p-4 mb-5">
+                <Image
+                  src="/illustrations/how-it-works-upload.jpg"
+                  alt="Upload your photos"
+                  width={400}
+                  height={300}
+                  className="rounded-xl mx-auto"
+                />
+              </div>
+              <div className="w-9 h-9 mx-auto mb-3 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                1
+              </div>
+              <h3 className="font-semibold text-lg mb-1">Upload Photos</h3>
+              <p className="text-gray-500 text-sm">
+                Drag & drop up to 50 listing photos at once. Supports JPG, PNG, WebP, and HEIC.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary-light rounded-2xl p-4 mb-5">
+                <Image
+                  src="/illustrations/how-it-works-configure.jpg"
+                  alt="Configure your settings"
+                  width={400}
+                  height={300}
+                  className="rounded-xl mx-auto"
+                />
+              </div>
+              <div className="w-9 h-9 mx-auto mb-3 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                2
+              </div>
+              <h3 className="font-semibold text-lg mb-1">Configure</h3>
+              <p className="text-gray-500 text-sm">
+                Choose dimensions, compression, watermark, and rename options.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary-light rounded-2xl p-4 mb-5">
+                <Image
+                  src="/illustrations/how-it-works-download.jpg"
+                  alt="Download processed photos"
+                  width={400}
+                  height={300}
+                  className="rounded-xl mx-auto"
+                />
+              </div>
+              <div className="w-9 h-9 mx-auto mb-3 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                3
+              </div>
+              <h3 className="font-semibold text-lg mb-1">Download</h3>
+              <p className="text-gray-500 text-sm">
+                Get all your MLS-ready photos as a ZIP. Done in seconds.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust & Privacy Banner */}
+      <section className="py-16 px-4 bg-gradient-to-r from-primary/5 to-primary-end/5">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10">
+          <div className="md:w-1/2">
+            <Image
+              src="/illustrations/trust-privacy.jpg"
+              alt="Your photos never leave your device"
+              width={600}
+              height={338}
+              className="rounded-2xl"
+            />
+          </div>
+          <div className="md:w-1/2">
+            <h2 className="font-heading font-bold text-2xl mb-4">
+              Your Photos Never Leave Your Device
+            </h2>
+            <p className="text-gray-600 leading-relaxed mb-4">
+              Unlike other tools that upload your images to remote servers, MLS Photo Tools processes everything locally in your browser. Your unreleased listings, client photos, and sensitive property data stay 100% private.
+            </p>
+            <div className="flex items-center gap-2 text-sm text-success-dark font-medium">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              No uploads, no tracking, no data collection
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Tools Grid — organized by category */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -558,6 +673,15 @@ export default function HomePage() {
             {toolCategories.map((category) => (
               <div key={category.label}>
                 <div className="flex items-center gap-3 mb-4">
+                  {categoryIllustrations[category.label] && (
+                    <Image
+                      src={categoryIllustrations[category.label]}
+                      alt={category.label}
+                      width={40}
+                      height={40}
+                      className="rounded-lg"
+                    />
+                  )}
                   <h3 className="font-heading font-bold text-lg text-midnight">
                     {category.label}
                   </h3>
