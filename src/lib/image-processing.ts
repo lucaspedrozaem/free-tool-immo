@@ -238,12 +238,22 @@ export async function processImages(
   return results;
 }
 
+function triggerDownload(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export async function downloadAsZip(
   images: ProcessedImage[],
   zipName: string = "listing-photos"
 ): Promise<void> {
   const JSZip = (await import("jszip")).default;
-  const { saveAs } = await import("file-saver");
 
   const zip = new JSZip();
   for (const img of images) {
@@ -251,12 +261,11 @@ export async function downloadAsZip(
   }
 
   const content = await zip.generateAsync({ type: "blob" });
-  saveAs(content, `${zipName}.zip`);
+  triggerDownload(content, `${zipName}.zip`);
 }
 
 export async function downloadSingleImage(image: ProcessedImage): Promise<void> {
-  const { saveAs } = await import("file-saver");
-  saveAs(image.blob, image.newName);
+  triggerDownload(image.blob, image.newName);
 }
 
 export function formatFileSize(bytes: number): string {
