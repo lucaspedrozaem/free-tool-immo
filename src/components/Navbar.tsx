@@ -6,13 +6,21 @@ import { useState } from "react";
 
 const tools = [
   { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
+  { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
   { name: "Batch Image Compressor", href: "/batch-image-compressor" },
   { name: "Online Image Resizer", href: "/online-image-resizer" },
+  { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
   { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
   { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
   { name: "Remove EXIF Data", href: "/remove-exif-data" },
+  { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
   { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
   { name: "Bulk Rename Photos", href: "/bulk-rename-photos" },
+  { name: "Photo Grid Maker", href: "/photo-grid-maker" },
+  { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
+  { name: "Agent Branding Bar", href: "/agent-branding-bar" },
+  { name: "Status Overlays", href: "/listing-status-overlays" },
+  { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
 ];
 
 export function Navbar() {
@@ -60,7 +68,7 @@ export function Navbar() {
                 </svg>
               </button>
               {toolsOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-lg shadow-lg border border-border-light py-2 z-50">
+                <div className="absolute top-full left-0 mt-1 w-[480px] bg-white rounded-lg shadow-lg border border-border-light py-2 z-50 grid grid-cols-2">
                   {tools.map((tool) => (
                     <Link
                       key={tool.href}

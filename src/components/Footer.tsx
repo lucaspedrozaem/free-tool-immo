@@ -3,13 +3,21 @@ import Image from "next/image";
 
 const toolLinks = [
   { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
+  { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
   { name: "Batch Image Compressor", href: "/batch-image-compressor" },
   { name: "Online Image Resizer", href: "/online-image-resizer" },
+  { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
   { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
   { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
   { name: "Remove EXIF Data", href: "/remove-exif-data" },
+  { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
   { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
   { name: "Bulk Rename Photos", href: "/bulk-rename-photos" },
+  { name: "Photo Grid Maker", href: "/photo-grid-maker" },
+  { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
+  { name: "Agent Branding Bar", href: "/agent-branding-bar" },
+  { name: "Status Overlays", href: "/listing-status-overlays" },
+  { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
 ];
 
 const guideLinks = [
@@ -35,7 +43,7 @@ export function Footer() {
   return (
     <footer className="bg-midnight text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2.5 mb-3">
               <Image
@@ -76,7 +84,25 @@ export function Footer() {
               Free Tools
             </h3>
             <ul className="space-y-2">
-              {toolLinks.map((link) => (
+              {toolLinks.slice(0, 8).map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">
+              More Tools
+            </h3>
+            <ul className="space-y-2">
+              {toolLinks.slice(8).map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
