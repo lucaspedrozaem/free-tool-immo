@@ -23,7 +23,7 @@ export function ResultsPanel({
   const savedPercent = Math.round((1 - totalNew / totalOriginal) * 100);
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-8">
+    <div className="bg-white rounded-xl shadow-md p-4 sm:p-8">
       {/* Success header */}
       <div className="text-center mb-8">
         <div className="w-16 h-16 mx-auto mb-4 bg-success/10 rounded-full flex items-center justify-center">
@@ -71,7 +71,7 @@ export function ResultsPanel({
             </div>
             <button
               onClick={() => downloadSingleImage(img)}
-              className="text-primary hover:text-primary-dark ml-3 text-xs font-medium"
+              className="text-primary hover:text-primary-dark ml-3 text-xs font-medium py-1 px-2"
             >
               Download
             </button>

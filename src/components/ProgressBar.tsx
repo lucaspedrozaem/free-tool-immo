@@ -10,7 +10,7 @@ export function ProgressBar({ progress }: ProgressBarProps) {
   const percentage = Math.round((progress.current / progress.total) * 100);
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-8 text-center">
+    <div className="bg-white rounded-xl shadow-md p-4 sm:p-8 text-center">
       <div className="mb-6">
         <div className="w-16 h-16 mx-auto mb-4 relative">
           <svg className="w-16 h-16 animate-spin text-primary/20" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@ export function ProgressBar({ progress }: ProgressBarProps) {
         <p className="text-lg font-semibold text-slate-dark">
           {progress.stage} {progress.current} of {progress.total} photos...
         </p>
-        <p className="text-sm text-gray-500 mt-1 truncate max-w-md mx-auto">
+        <p className="text-sm text-gray-500 mt-1 truncate max-w-xs sm:max-w-md mx-auto">
           {progress.currentFile}
         </p>
       </div>

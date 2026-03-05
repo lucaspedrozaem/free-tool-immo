@@ -239,7 +239,7 @@ export default function HomePage() {
                   <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-4">
                     {files.length} Photo{files.length !== 1 ? "s" : ""} Selected
                   </h3>
-                  <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
                     {files.map((f, i) => (
                       <div
                         key={i}

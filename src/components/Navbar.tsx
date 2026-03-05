@@ -108,7 +108,7 @@ export function Navbar() {
                 </button>
 
                 {openCategory === category.label && (
-                  <div className="absolute top-full left-0 pt-1 z-50 min-w-[220px]">
+                  <div className="absolute top-full left-0 pt-1 z-50 min-w-[200px] max-w-[calc(100vw-2rem)]">
                   <div className="bg-white rounded-xl shadow-xl border border-border-light py-2">
                     {category.tools.map((tool) => (
                       <Link
@@ -139,7 +139,7 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="lg:hidden p-2"
+            className="lg:hidden p-2.5 -mr-1"
             onClick={() => {
               setMobileOpen(!mobileOpen);
               setMobileSection(null);
