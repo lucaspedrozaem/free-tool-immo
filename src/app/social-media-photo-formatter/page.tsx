@@ -12,7 +12,7 @@ import type {
 } from "@/lib/image-processing";
 
 type AppState = "upload" | "configure" | "processing" | "done";
-type FillMode = "blur" | "black" | "white" | "brand";
+type FillMode = "blur" | "black" | "white" | "brand" | "crop";
 
 const CANVAS_PRESETS = [
   { label: "9:16 — Stories / TikTok", width: 1080, height: 1920 },
@@ -59,32 +59,41 @@ async function formatForSocial(
   const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
   const ctx = canvas.getContext("2d")!;
 
-  // Fill background
-  if (fillMode === "blur") {
-    // Draw blurred/scaled version as background
-    const bgScale = Math.max(canvasWidth / bitmap.width, canvasHeight / bitmap.height);
-    const bgW = Math.round(bitmap.width * bgScale);
-    const bgH = Math.round(bitmap.height * bgScale);
-    const bgX = Math.round((canvasWidth - bgW) / 2);
-    const bgY = Math.round((canvasHeight - bgH) / 2);
-    ctx.filter = "blur(30px) brightness(0.7)";
-    ctx.drawImage(bitmap, bgX - 20, bgY - 20, bgW + 40, bgH + 40);
-    ctx.filter = "none";
-  } else if (fillMode === "brand") {
-    ctx.fillStyle = brandColor;
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  if (fillMode === "crop") {
+    // Center-crop to fill the entire canvas (no background)
+    const coverScale = Math.max(canvasWidth / bitmap.width, canvasHeight / bitmap.height);
+    const srcW = Math.round(canvasWidth / coverScale);
+    const srcH = Math.round(canvasHeight / coverScale);
+    const srcX = Math.round((bitmap.width - srcW) / 2);
+    const srcY = Math.round((bitmap.height - srcH) / 2);
+    ctx.drawImage(bitmap, srcX, srcY, srcW, srcH, 0, 0, canvasWidth, canvasHeight);
   } else {
-    ctx.fillStyle = fillMode === "black" ? "#000000" : "#ffffff";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  }
+    // Fill background
+    if (fillMode === "blur") {
+      const bgScale = Math.max(canvasWidth / bitmap.width, canvasHeight / bitmap.height);
+      const bgW = Math.round(bitmap.width * bgScale);
+      const bgH = Math.round(bitmap.height * bgScale);
+      const bgX = Math.round((canvasWidth - bgW) / 2);
+      const bgY = Math.round((canvasHeight - bgH) / 2);
+      ctx.filter = "blur(30px) brightness(0.7)";
+      ctx.drawImage(bitmap, bgX - 20, bgY - 20, bgW + 40, bgH + 40);
+      ctx.filter = "none";
+    } else if (fillMode === "brand") {
+      ctx.fillStyle = brandColor;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    } else {
+      ctx.fillStyle = fillMode === "black" ? "#000000" : "#ffffff";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
 
-  // Draw original photo centered (fit inside canvas)
-  const scale = Math.min(canvasWidth / bitmap.width, canvasHeight / bitmap.height) * 0.9;
-  const drawW = Math.round(bitmap.width * scale);
-  const drawH = Math.round(bitmap.height * scale);
-  const drawX = Math.round((canvasWidth - drawW) / 2);
-  const drawY = Math.round((canvasHeight - drawH) / 2);
-  ctx.drawImage(bitmap, drawX, drawY, drawW, drawH);
+    // Draw original photo centered (fit inside canvas)
+    const scale = Math.min(canvasWidth / bitmap.width, canvasHeight / bitmap.height) * 0.9;
+    const drawW = Math.round(bitmap.width * scale);
+    const drawH = Math.round(bitmap.height * scale);
+    const drawX = Math.round((canvasWidth - drawW) / 2);
+    const drawY = Math.round((canvasHeight - drawH) / 2);
+    ctx.drawImage(bitmap, drawX, drawY, drawW, drawH);
+  }
   bitmap.close();
 
   const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
@@ -201,9 +210,10 @@ export default function SocialMediaFormatterPage() {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
                     Background Fill
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {([
                       { mode: "blur" as FillMode, label: "Blurred Photo", desc: "Most popular" },
+                      { mode: "crop" as FillMode, label: "Crop to Fill", desc: "No background" },
                       { mode: "black" as FillMode, label: "Black", desc: "Classic look" },
                       { mode: "white" as FillMode, label: "White", desc: "Clean & minimal" },
                       { mode: "brand" as FillMode, label: "Brand Color", desc: "Custom color" },

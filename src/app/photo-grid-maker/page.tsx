@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 
@@ -31,9 +31,9 @@ const faqItems = [
       "Yes! Use the gap slider to adjust the white border between photos from 0px (no border) to 20px. Most agents prefer 4-8px for a clean, professional look.",
   },
   {
-    question: "What resolution is the output?",
+    question: "Can I reorder photos after uploading?",
     answer:
-      "The output resolution depends on your source photos. Each cell preserves the original photo quality. A 2x2 grid of 1920x1080 photos will produce a 3840+ pixel wide image — perfect for high-resolution displays and print.",
+      "Yes! Simply drag and drop photos to rearrange them in the grid. Upload all your photos at once, then drag them into your preferred order.",
   },
   {
     question: "Are my photos uploaded to a server?",
@@ -45,52 +45,75 @@ const faqItems = [
 export default function PhotoGridMakerPage() {
   const [layout, setLayout] = useState<GridLayout>("2x2");
   const [gap, setGap] = useState(6);
-  const [images, setImages] = useState<(File | null)[]>([null, null, null, null]);
-  const [previews, setPreviews] = useState<(string | null)[]>([null, null, null, null]);
+  const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [resultBlob, setResultBlob] = useState<Blob | null>(null);
-  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragIndexRef = useRef<number | null>(null);
 
   const config = GRID_CONFIGS[layout];
 
-  useEffect(() => {
-    const newImages = new Array(config.count).fill(null);
-    const newPreviews = new Array(config.count).fill(null);
-    for (let i = 0; i < Math.min(images.length, config.count); i++) {
-      newImages[i] = images[i];
-      newPreviews[i] = previews[i];
-    }
-    setImages(newImages);
-    setPreviews(newPreviews);
+  const handleBulkUpload = useCallback((fileList: FileList | File[]) => {
+    const newFiles = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
+    const newEntries = newFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setImages((prev) => [...prev, ...newEntries]);
     setResultUrl(null);
     setResultBlob(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layout]);
+  }, []);
 
-  const handleImageSelect = (index: number, file: File) => {
-    const url = URL.createObjectURL(file);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length > 0) {
+        handleBulkUpload(e.dataTransfer.files);
+      }
+    },
+    [handleBulkUpload]
+  );
+
+  const removeImage = (index: number) => {
     setImages((prev) => {
       const next = [...prev];
-      next[index] = file;
-      return next;
-    });
-    setPreviews((prev) => {
-      const next = [...prev];
-      if (next[index]) URL.revokeObjectURL(next[index]!);
-      next[index] = url;
+      URL.revokeObjectURL(next[index].preview);
+      next.splice(index, 1);
       return next;
     });
     setResultUrl(null);
-    setResultBlob(null);
   };
 
-  const allFilled = images.slice(0, config.count).every((img) => img !== null);
+  // Drag-and-drop reorder
+  const handleDragStart = (index: number) => {
+    dragIndexRef.current = index;
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragIndexRef.current === null || dragIndexRef.current === index) return;
+    setImages((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(dragIndexRef.current!, 1);
+      next.splice(index, 0, moved);
+      dragIndexRef.current = index;
+      return next;
+    });
+    setResultUrl(null);
+  };
+
+  const handleDragEnd = () => {
+    dragIndexRef.current = null;
+  };
+
+  const usedImages = images.slice(0, config.count);
+  const allFilled = usedImages.length >= config.count;
 
   const handleGenerate = async () => {
     if (!allFilled) return;
 
     const bitmaps = await Promise.all(
-      images.slice(0, config.count).map((file) => createImageBitmap(file!))
+      usedImages.map((entry) => createImageBitmap(entry.file))
     );
 
     const cellW = 800;
@@ -111,7 +134,6 @@ export default function PhotoGridMakerPage() {
         const x = c * (cellW + gap);
         const y = r * (cellH + gap);
 
-        // Cover-fit: center crop
         const srcRatio = bm.width / bm.height;
         const cellRatio = cellW / cellH;
         let sx = 0, sy = 0, sw = bm.width, sh = bm.height;
@@ -148,10 +170,9 @@ export default function PhotoGridMakerPage() {
   };
 
   const handleReset = () => {
-    previews.forEach((p) => p && URL.revokeObjectURL(p));
+    images.forEach((img) => URL.revokeObjectURL(img.preview));
     if (resultUrl) URL.revokeObjectURL(resultUrl);
-    setImages(new Array(config.count).fill(null));
-    setPreviews(new Array(config.count).fill(null));
+    setImages([]);
     setResultUrl(null);
     setResultBlob(null);
   };
@@ -165,7 +186,7 @@ export default function PhotoGridMakerPage() {
               Listing Photo Grid Maker
             </h1>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-              Create clean, professional photo grids for your listings. Perfect for social media teasers, MLS hero images, and marketing materials.
+              Create clean, professional photo grids for your listings. Upload all photos at once, drag to reorder, then generate.
             </p>
           </div>
 
@@ -178,7 +199,10 @@ export default function PhotoGridMakerPage() {
               {(Object.keys(GRID_CONFIGS) as GridLayout[]).map((l) => (
                 <button
                   key={l}
-                  onClick={() => setLayout(l)}
+                  onClick={() => {
+                    setLayout(l);
+                    setResultUrl(null);
+                  }}
                   className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                     layout === l
                       ? "border-primary bg-primary/10 text-primary"
@@ -192,7 +216,7 @@ export default function PhotoGridMakerPage() {
           </div>
 
           {/* Gap Slider */}
-          <div className="mb-8">
+          <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Border Gap: {gap}px
             </label>
@@ -209,47 +233,110 @@ export default function PhotoGridMakerPage() {
             />
           </div>
 
-          {/* Drop Zones Grid */}
+          {/* Upload Zone */}
           <div
-            className="grid gap-3 mb-8"
-            style={{
-              gridTemplateColumns: `repeat(${config.cols}, 1fr)`,
-              gridTemplateRows: `repeat(${config.rows}, 1fr)`,
-            }}
+            className="border-2 border-dashed border-gray-300 rounded-xl p-6 mb-6 text-center cursor-pointer hover:border-primary transition-colors bg-gray-50/50"
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
           >
-            {Array.from({ length: config.count }).map((_, i) => (
-              <div
-                key={i}
-                onClick={() => fileInputRefs.current[i]?.click()}
-                className="relative aspect-[4/3] border-2 border-dashed border-gray-300 rounded-lg overflow-hidden cursor-pointer hover:border-primary transition-colors bg-gray-50 flex items-center justify-center"
-              >
-                {previews[i] ? (
-                  <img
-                    src={previews[i]!}
-                    alt={`Photo ${i + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-center p-4">
-                    <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <p className="text-sm text-gray-500">Photo {i + 1}</p>
-                  </div>
-                )}
-                <input
-                  ref={(el) => { fileInputRefs.current[i] = el; }}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleImageSelect(i, file);
-                  }}
-                />
-              </div>
-            ))}
+            <svg className="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <p className="text-sm font-medium text-gray-600">
+              Click or drag & drop to upload photos
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Upload all photos at once — reorder below by dragging
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) handleBulkUpload(e.target.files);
+                e.target.value = "";
+              }}
+            />
           </div>
+
+          {/* Photo Strip — drag to reorder */}
+          {images.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-semibold text-gray-700">
+                  {images.length} photo{images.length !== 1 ? "s" : ""} uploaded
+                  {images.length > config.count && (
+                    <span className="text-gray-400 font-normal"> — first {config.count} will be used</span>
+                  )}
+                </p>
+                <button onClick={handleReset} className="text-xs text-gray-400 hover:text-red-500">
+                  Clear All
+                </button>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {images.map((img, i) => (
+                  <div
+                    key={img.preview}
+                    draggable
+                    onDragStart={() => handleDragStart(i)}
+                    onDragOver={(e) => handleDragOver(e, i)}
+                    onDragEnd={handleDragEnd}
+                    className={`relative flex-shrink-0 w-24 h-18 rounded-lg overflow-hidden border-2 cursor-grab active:cursor-grabbing transition-all ${
+                      i < config.count ? "border-primary/40" : "border-gray-200 opacity-50"
+                    }`}
+                  >
+                    <img src={img.preview} alt="" className="w-full h-full object-cover" />
+                    <div className="absolute top-0.5 left-1 bg-black/60 text-white text-[10px] font-bold px-1 rounded">
+                      {i + 1}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeImage(i);
+                      }}
+                      className="absolute top-0.5 right-0.5 bg-black/60 text-white w-4 h-4 rounded-full text-[10px] flex items-center justify-center hover:bg-red-500"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Grid Preview */}
+          {usedImages.length > 0 && (
+            <div
+              className="grid gap-1 mb-8 max-w-2xl mx-auto"
+              style={{
+                gridTemplateColumns: `repeat(${config.cols}, 1fr)`,
+                gridTemplateRows: `repeat(${config.rows}, 1fr)`,
+                gap: `${Math.max(2, gap / 2)}px`,
+              }}
+            >
+              {Array.from({ length: config.count }).map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-[4/3] rounded-md overflow-hidden bg-gray-100"
+                >
+                  {usedImages[i] ? (
+                    <img
+                      src={usedImages[i].preview}
+                      alt={`Slot ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-sm text-gray-400">
+                      {i + 1}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-3">
@@ -261,7 +348,7 @@ export default function PhotoGridMakerPage() {
               >
                 {allFilled
                   ? "Generate Grid"
-                  : `Add ${config.count - images.filter(Boolean).length} More Photo${config.count - images.filter(Boolean).length !== 1 ? "s" : ""}`}
+                  : `Add ${config.count - usedImages.length} More Photo${config.count - usedImages.length !== 1 ? "s" : ""}`}
               </button>
             ) : (
               <>
@@ -272,10 +359,13 @@ export default function PhotoGridMakerPage() {
                   Download Grid
                 </button>
                 <button
-                  onClick={handleReset}
+                  onClick={() => {
+                    setResultUrl(null);
+                    setResultBlob(null);
+                  }}
                   className="px-6 py-3 border border-gray-300 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Start Over
+                  Edit
                 </button>
               </>
             )}
