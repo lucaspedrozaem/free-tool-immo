@@ -82,10 +82,10 @@ export function PhotoDropzone({
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-xl p-12 md:p-16 text-center cursor-pointer transition-all duration-200 ${
+      className={`border-2 border-dashed rounded-2xl p-12 md:p-16 text-center cursor-pointer transition-all duration-300 ${
         isDragActive
-          ? "border-primary bg-primary/5 scale-[1.01] shadow-lg"
-          : "border-border hover:border-primary/50 bg-white shadow-md"
+          ? "border-primary bg-primary/5 scale-[1.02] shadow-xl shadow-primary/10"
+          : "border-border hover:border-primary/50 bg-white shadow-lg hover:shadow-xl"
       }`}
     >
       <input {...getInputProps()} />

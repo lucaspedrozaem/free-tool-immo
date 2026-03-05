@@ -177,16 +177,27 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-12 md:py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="relative py-16 md:py-24 px-4 overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative max-w-4xl mx-auto text-center">
           {state === "upload" && (
             <>
+              <div className="inline-flex items-center gap-2 bg-white border border-border-light rounded-full px-4 py-1.5 text-sm text-slate-dark mb-6 shadow-sm">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                100% Free &middot; No Sign-up &middot; Browser-Based
+              </div>
               <h1 className="font-heading font-extrabold text-4xl md:text-5xl lg:text-6xl text-midnight leading-tight">
-                Format Listing Photos for the MLS in Seconds.
+                Format Listing Photos
+                <br />
+                <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
+                  for the MLS in Seconds.
+                </span>
               </h1>
-              <p className="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="mt-5 text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
                 Batch resize, compress, and watermark up to 50 real estate
-                photos instantly. 100% free, runs completely in your browser for
+                photos instantly. Runs completely in your browser for
                 ultimate privacy.
               </p>
               <div className="mt-10">
@@ -459,14 +470,17 @@ export default function HomePage() {
       </section>
 
       {/* Below the fold: Benefits */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-heading font-bold text-3xl text-center mb-12">
+          <h2 className="font-heading font-bold text-3xl text-center mb-3">
             Why Real Estate Pros Use Us
           </h2>
+          <p className="text-gray-500 text-center mb-14 max-w-lg mx-auto">
+            Trusted by agents, photographers, and brokerages nationwide.
+          </p>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent">
+              <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
                 <svg
                   className="w-7 h-7 text-primary"
                   fill="none"
@@ -482,13 +496,13 @@ export default function HomePage() {
                 </svg>
               </div>
               <h3 className="font-semibold text-xl mb-2">Lightning Fast</h3>
-              <p className="text-gray-600">
+              <p className="text-gray-500">
                 No waiting for huge files to upload to a server. Everything
                 processes instantly on your device.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-14 h-14 mx-auto mb-4 bg-success/10 rounded-full flex items-center justify-center">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-success/5 to-transparent">
+              <div className="w-14 h-14 mx-auto mb-4 bg-success/10 rounded-2xl flex items-center justify-center">
                 <svg
                   className="w-7 h-7 text-success"
                   fill="none"
@@ -504,13 +518,13 @@ export default function HomePage() {
                 </svg>
               </div>
               <h3 className="font-semibold text-xl mb-2">MLS Compliant</h3>
-              <p className="text-gray-600">
+              <p className="text-gray-500">
                 Never get a photo rejected by your MLS, Zillow, or Realtor.com
                 again. Pre-built formatting presets.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent">
+              <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
                 <svg
                   className="w-7 h-7 text-primary"
                   fill="none"
@@ -526,7 +540,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <h3 className="font-semibold text-xl mb-2">100% Private</h3>
-              <p className="text-gray-600">
+              <p className="text-gray-500">
                 We never see your photos. Everything runs in your browser. Your
                 unreleased listings stay confidential.
               </p>
@@ -536,12 +550,12 @@ export default function HomePage() {
       </section>
 
       {/* Tools Grid */}
-      <section className="py-16 px-4">
+      <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-heading font-bold text-3xl text-center mb-4">
+          <h2 className="font-heading font-bold text-3xl text-center mb-3">
             Free Real Estate Photo Tools
           </h2>
-          <p className="text-gray-600 text-center mb-12 max-w-xl mx-auto">
+          <p className="text-gray-500 text-center mb-14 max-w-xl mx-auto">
             Every tool is 100% free, runs in your browser, and is designed
             specifically for real estate professionals.
           </p>
@@ -550,11 +564,11 @@ export default function HomePage() {
               <Link
                 key={tool.href}
                 href={tool.href}
-                className="bg-white rounded-lg border border-border-light p-5 hover:shadow-md hover:border-primary/30 transition-all group"
+                className="bg-white rounded-xl border border-border-light p-5 hover:shadow-lg hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-200 group"
               >
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
                   <svg
-                    className="w-5 h-5 text-primary"
+                    className="w-5 h-5 text-primary group-hover:text-white transition-colors"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

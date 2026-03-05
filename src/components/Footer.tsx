@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const toolLinks = [
   { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
@@ -36,8 +37,17 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <div className="font-heading font-bold text-xl mb-3">
-              MLSPhotoTools
+            <div className="flex items-center gap-2.5 mb-3">
+              <Image
+                src="/logo.png"
+                alt="MLS Photo Tools"
+                width={32}
+                height={32}
+                className="rounded-md"
+              />
+              <span className="font-heading font-bold text-xl">
+                MLS<span className="text-primary">Photo</span>Tools
+              </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               The fastest, 100% free, browser-based photo formatting utilities
