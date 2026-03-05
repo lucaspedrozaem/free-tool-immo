@@ -4,28 +4,53 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
-const tools = [
-  { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
-  { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
-  { name: "Batch Image Compressor", href: "/batch-image-compressor" },
-  { name: "Online Image Resizer", href: "/online-image-resizer" },
-  { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
-  { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
-  { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
-  { name: "Remove EXIF Data", href: "/remove-exif-data" },
-  { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
-  { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
-  { name: "Bulk Rename Photos", href: "/bulk-rename-photos" },
-  { name: "Photo Grid Maker", href: "/photo-grid-maker" },
-  { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
-  { name: "Agent Branding Bar", href: "/agent-branding-bar" },
-  { name: "Status Overlays", href: "/listing-status-overlays" },
-  { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
+const toolCategories = [
+  {
+    label: "Convert & Format",
+    icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
+    tools: [
+      { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
+      { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
+    ],
+  },
+  {
+    label: "Resize & Crop",
+    icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4",
+    tools: [
+      { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
+      { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
+      { name: "Online Image Resizer", href: "/online-image-resizer" },
+      { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
+      { name: "Batch Image Compressor", href: "/batch-image-compressor" },
+    ],
+  },
+  {
+    label: "Privacy & Cleanup",
+    icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+    tools: [
+      { name: "Remove EXIF Data", href: "/remove-exif-data" },
+      { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
+      { name: "Bulk Rename Photos", href: "/bulk-rename-photos" },
+    ],
+  },
+  {
+    label: "Brand & Market",
+    icon: "M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z",
+    tools: [
+      { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
+      { name: "Agent Branding Bar", href: "/agent-branding-bar" },
+      { name: "Status Overlays", href: "/listing-status-overlays" },
+      { name: "Photo Grid Maker", href: "/photo-grid-maker" },
+      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
+      { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
+    ],
+  },
 ];
 
 export function Navbar() {
   const [toolsOpen, setToolsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState<string | null>(null);
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-border-light sticky top-0 z-50">
@@ -67,17 +92,56 @@ export function Navbar() {
                   />
                 </svg>
               </button>
+
+              {/* Mega Menu */}
               {toolsOpen && (
-                <div className="absolute top-full left-0 mt-1 w-[480px] bg-white rounded-lg shadow-lg border border-border-light py-2 z-50 grid grid-cols-2">
-                  {tools.map((tool) => (
-                    <Link
-                      key={tool.href}
-                      href={tool.href}
-                      className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors"
-                    >
-                      {tool.name}
-                    </Link>
-                  ))}
+                <div className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-xl border border-border-light p-5 z-50 w-[640px]">
+                  <div className="grid grid-cols-2 gap-6">
+                    {toolCategories.map((category) => (
+                      <div key={category.label}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg
+                            className="w-4 h-4 text-primary"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d={category.icon}
+                            />
+                          </svg>
+                          <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                            {category.label}
+                          </span>
+                        </div>
+                        <ul className="space-y-0.5">
+                          {category.tools.map((tool) => (
+                            <li key={tool.href}>
+                              <Link
+                                href={tool.href}
+                                className="block px-3 py-1.5 text-sm text-slate-dark hover:bg-primary-light hover:text-primary rounded-md transition-colors"
+                              >
+                                {tool.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-border-light">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400">
+                        16 free tools — all browser-based, no signup
+                      </span>
+                      <span className="text-xs font-semibold text-success">
+                        100% Free Forever
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -95,7 +159,10 @@ export function Navbar() {
           {/* Mobile hamburger */}
           <button
             className="md:hidden p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => {
+              setMobileOpen(!mobileOpen);
+              setMobileSection(null);
+            }}
           >
             <svg
               className="w-6 h-6"
@@ -121,23 +188,71 @@ export function Navbar() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu — accordion by category */}
         {mobileOpen && (
           <div className="md:hidden pb-4">
             <div className="space-y-1">
-              {tools.map((tool) => (
-                <Link
-                  key={tool.href}
-                  href={tool.href}
-                  className="block px-3 py-2 text-sm text-slate-dark hover:bg-primary-light rounded-md"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {tool.name}
-                </Link>
+              {toolCategories.map((category) => (
+                <div key={category.label}>
+                  <button
+                    onClick={() =>
+                      setMobileSection(
+                        mobileSection === category.label ? null : category.label
+                      )
+                    }
+                    className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-slate-dark hover:bg-primary-light rounded-md"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4 text-primary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d={category.icon}
+                        />
+                      </svg>
+                      {category.label}
+                    </span>
+                    <svg
+                      className={`w-4 h-4 text-gray-400 transition-transform ${
+                        mobileSection === category.label ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {mobileSection === category.label && (
+                    <div className="pl-9 space-y-0.5 mt-0.5 mb-1">
+                      {category.tools.map((tool) => (
+                        <Link
+                          key={tool.href}
+                          href={tool.href}
+                          className="block px-3 py-2 text-sm text-slate-dark hover:bg-primary-light rounded-md"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {tool.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
               <Link
                 href="/guides/how-to-resize-photos-for-mls"
-                className="block px-3 py-2 text-sm font-medium text-slate-dark hover:bg-primary-light rounded-md"
+                className="block px-3 py-2.5 text-sm font-semibold text-slate-dark hover:bg-primary-light rounded-md"
                 onClick={() => setMobileOpen(false)}
               >
                 Guides

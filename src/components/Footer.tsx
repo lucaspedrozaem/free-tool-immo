@@ -1,23 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
 
-const toolLinks = [
-  { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
-  { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
-  { name: "Batch Image Compressor", href: "/batch-image-compressor" },
-  { name: "Online Image Resizer", href: "/online-image-resizer" },
-  { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
-  { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
-  { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
-  { name: "Remove EXIF Data", href: "/remove-exif-data" },
-  { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
-  { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
-  { name: "Bulk Rename Photos", href: "/bulk-rename-photos" },
-  { name: "Photo Grid Maker", href: "/photo-grid-maker" },
-  { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
-  { name: "Agent Branding Bar", href: "/agent-branding-bar" },
-  { name: "Status Overlays", href: "/listing-status-overlays" },
-  { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
+const footerCategories = [
+  {
+    label: "Convert & Format",
+    tools: [
+      { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
+      { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
+    ],
+  },
+  {
+    label: "Resize & Crop",
+    tools: [
+      { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
+      { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
+      { name: "Online Image Resizer", href: "/online-image-resizer" },
+      { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
+      { name: "Batch Image Compressor", href: "/batch-image-compressor" },
+    ],
+  },
+  {
+    label: "Privacy & Cleanup",
+    tools: [
+      { name: "Remove EXIF Data", href: "/remove-exif-data" },
+      { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
+      { name: "Bulk Rename Photos", href: "/bulk-rename-photos" },
+    ],
+  },
+  {
+    label: "Brand & Market",
+    tools: [
+      { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
+      { name: "Agent Branding Bar", href: "/agent-branding-bar" },
+      { name: "Status Overlays", href: "/listing-status-overlays" },
+      { name: "Photo Grid Maker", href: "/photo-grid-maker" },
+      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
+      { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
+    ],
+  },
 ];
 
 const guideLinks = [
@@ -43,8 +63,9 @@ export function Footer() {
   return (
     <footer className="bg-midnight text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          {/* Brand */}
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-3">
               <Image
                 src="/logo.png"
@@ -79,47 +100,58 @@ export function Footer() {
             </div>
           </div>
 
+          {/* Convert & Format + Resize & Crop */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">
-              Free Tools
-            </h3>
-            <ul className="space-y-2">
-              {toolLinks.slice(0, 8).map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {footerCategories.slice(0, 2).map((category) => (
+              <div key={category.label} className="mb-5 last:mb-0">
+                <h3 className="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-2">
+                  {category.label}
+                </h3>
+                <ul className="space-y-1.5">
+                  {category.tools.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-300 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
+          {/* Privacy & Cleanup + Brand & Market */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">
-              More Tools
-            </h3>
-            <ul className="space-y-2">
-              {toolLinks.slice(8).map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {footerCategories.slice(2, 4).map((category) => (
+              <div key={category.label} className="mb-5 last:mb-0">
+                <h3 className="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-2">
+                  {category.label}
+                </h3>
+                <ul className="space-y-1.5">
+                  {category.tools.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-300 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
+          {/* Guides */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">
+            <h3 className="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-2">
               Guides
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               {guideLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -133,11 +165,12 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Company */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">
+            <h3 className="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-2">
               Company
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               <li>
                 <Link
                   href="/privacy"
