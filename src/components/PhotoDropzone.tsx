@@ -26,11 +26,7 @@ export function PhotoDropzone({
   );
 
   const defaultAccept = accept ?? {
-    "image/jpeg": [".jpg", ".jpeg"],
-    "image/png": [".png"],
-    "image/webp": [".webp"],
-    "image/heic": [".heic"],
-    "image/heif": [".heif"],
+    "image/*": [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"],
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
