@@ -96,8 +96,8 @@ export function ToolPageLayout({
                   <Image
                     src={illustration}
                     alt={title}
-                    width={320}
-                    height={240}
+                    width={260}
+                    height={195}
                     className="mx-auto rounded-2xl"
                     priority
                   />

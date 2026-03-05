@@ -122,6 +122,7 @@ export default function HomePage() {
     "bottom-right" | "bottom-left" | "center" | "top-right"
   >("bottom-right");
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.5);
+  const [showToolsDropdown, setShowToolsDropdown] = useState(false);
 
   const handleFiles = useCallback((newFiles: File[]) => {
     setFiles(newFiles);
@@ -206,8 +207,8 @@ export default function HomePage() {
                 <Image
                   src="/illustrations/hero-main.jpg"
                   alt="Real estate agent processing listing photos"
-                  width={800}
-                  height={450}
+                  width={600}
+                  height={338}
                   className="mx-auto rounded-2xl"
                   priority
                 />
@@ -461,6 +462,58 @@ export default function HomePage() {
                   Process {files.length} Photo{files.length !== 1 ? "s" : ""}{" "}
                   Now
                 </button>
+              </div>
+
+              {/* Need something else? */}
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setShowToolsDropdown(!showToolsDropdown)}
+                  className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors"
+                >
+                  Need something else?
+                  <svg
+                    className={`w-4 h-4 transition-transform ${showToolsDropdown ? "rotate-180" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {showToolsDropdown && (
+                  <div className="mt-4 bg-white rounded-xl border border-border-light shadow-md p-4 text-left">
+                    <div className="space-y-4">
+                      {toolCategories.map((category) => (
+                        <div key={category.label}>
+                          <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                            {category.label}
+                          </h4>
+                          <div className="grid sm:grid-cols-2 gap-1">
+                            {category.tools.map((tool) => (
+                              <Link
+                                key={tool.href}
+                                href={tool.href}
+                                className="flex items-center gap-2 px-3 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary rounded-lg transition-colors"
+                              >
+                                <svg
+                                  className="w-4 h-4 text-primary flex-shrink-0"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d={tool.icon} />
+                                </svg>
+                                {tool.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
