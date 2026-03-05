@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const toolCategories = [
   {
-    label: "Convert & Format",
+    label: "Convert",
     icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
     tools: [
       { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
@@ -25,7 +25,7 @@ const toolCategories = [
     ],
   },
   {
-    label: "Privacy & Cleanup",
+    label: "Privacy",
     icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
     tools: [
       { name: "Remove EXIF Data", href: "/remove-exif-data" },
@@ -48,117 +48,94 @@ const toolCategories = [
 ];
 
 export function Navbar() {
-  const [toolsOpen, setToolsOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-border-light sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center gap-2.5">
+        <div className="flex justify-between items-center h-18">
+          {/* Logo — bigger */}
+          <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo.png"
               alt="MLS Photo Tools"
-              width={56}
-              height={56}
-              className="rounded-md"
+              width={72}
+              height={72}
+              className="rounded-lg"
             />
-            <span className="font-heading font-bold text-xl text-midnight">
-              MLS<span className="text-primary">Photo</span>Tools
+            <span className="font-heading font-bold text-2xl text-midnight">
+              MLS<span className="bg-gradient-to-r from-primary to-primary-end bg-clip-text text-transparent">Photo</span>Tools
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
-            <div
-              className="relative"
-              onMouseEnter={() => setToolsOpen(true)}
-              onMouseLeave={() => setToolsOpen(false)}
-            >
-              <button className="text-slate-dark hover:text-primary font-medium flex items-center gap-1 transition-colors">
-                All Tools
-                <svg
-                  className={`w-4 h-4 transition-transform ${toolsOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
+          {/* Desktop Nav — each category as its own dropdown */}
+          <div className="hidden lg:flex items-center gap-1">
+            {toolCategories.map((category) => (
+              <div
+                key={category.label}
+                className="relative"
+                onMouseEnter={() => setOpenCategory(category.label)}
+                onMouseLeave={() => setOpenCategory(null)}
+              >
+                <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-dark hover:text-primary transition-colors rounded-lg hover:bg-primary-light/50">
+                  <svg
+                    className="w-4 h-4 text-primary"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d={category.icon}
+                    />
+                  </svg>
+                  {category.label}
+                  <svg
+                    className={`w-3 h-3 text-gray-400 transition-transform ${openCategory === category.label ? "rotate-180" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
 
-              {/* Mega Menu */}
-              {toolsOpen && (
-                <div className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-xl border border-border-light p-5 z-50 w-[640px]">
-                  <div className="grid grid-cols-2 gap-6">
-                    {toolCategories.map((category) => (
-                      <div key={category.label}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <svg
-                            className="w-4 h-4 text-primary"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d={category.icon}
-                            />
-                          </svg>
-                          <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                            {category.label}
-                          </span>
-                        </div>
-                        <ul className="space-y-0.5">
-                          {category.tools.map((tool) => (
-                            <li key={tool.href}>
-                              <Link
-                                href={tool.href}
-                                className="block px-3 py-1.5 text-sm text-slate-dark hover:bg-primary-light hover:text-primary rounded-md transition-colors"
-                              >
-                                {tool.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                {openCategory === category.label && (
+                  <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-border-light py-2 z-50 min-w-[220px]">
+                    {category.tools.map((tool) => (
+                      <Link
+                        key={tool.href}
+                        href={tool.href}
+                        className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors"
+                      >
+                        {tool.name}
+                      </Link>
                     ))}
                   </div>
-                  <div className="mt-4 pt-3 border-t border-border-light">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        16 free tools — all browser-based, no signup
-                      </span>
-                      <span className="text-xs font-semibold text-success">
-                        100% Free Forever
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            ))}
+
             <Link
               href="/guides/how-to-resize-photos-for-mls"
-              className="text-slate-dark hover:text-primary font-medium transition-colors"
+              className="px-3 py-2 text-sm font-medium text-slate-dark hover:text-primary transition-colors rounded-lg hover:bg-primary-light/50"
             >
               Guides
             </Link>
-            <div className="bg-success/10 text-success-dark text-sm font-semibold px-3 py-1.5 rounded-full">
-              100% Free Forever
+
+            <div className="ml-2 bg-gradient-to-r from-primary to-primary-end text-white text-xs font-bold px-3 py-1.5 rounded-full">
+              100% Free
             </div>
           </div>
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             onClick={() => {
               setMobileOpen(!mobileOpen);
               setMobileSection(null);
@@ -172,17 +149,9 @@ export function Navbar() {
               strokeWidth={2}
             >
               {mobileOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
@@ -190,7 +159,7 @@ export function Navbar() {
 
         {/* Mobile menu — accordion by category */}
         {mobileOpen && (
-          <div className="md:hidden pb-4">
+          <div className="lg:hidden pb-4">
             <div className="space-y-1">
               {toolCategories.map((category) => (
                 <div key={category.label}>
@@ -210,11 +179,7 @@ export function Navbar() {
                         stroke="currentColor"
                         strokeWidth={2}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d={category.icon}
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" d={category.icon} />
                       </svg>
                       {category.label}
                     </span>
@@ -227,11 +192,7 @@ export function Navbar() {
                       stroke="currentColor"
                       strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   {mobileSection === category.label && (

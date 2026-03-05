@@ -66,16 +66,16 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2.5 mb-3">
+            <div className="flex items-center gap-3 mb-3">
               <Image
                 src="/logo.png"
                 alt="MLS Photo Tools"
-                width={32}
-                height={32}
-                className="rounded-md"
+                width={48}
+                height={48}
+                className="rounded-lg"
               />
               <span className="font-heading font-bold text-xl">
-                MLS<span className="text-primary">Photo</span>Tools
+                MLS<span className="bg-gradient-to-r from-primary to-primary-end bg-clip-text text-transparent">Photo</span>Tools
               </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">

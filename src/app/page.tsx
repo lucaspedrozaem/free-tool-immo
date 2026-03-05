@@ -183,7 +183,7 @@ export default function HomePage() {
               <h1 className="font-heading font-extrabold text-4xl md:text-5xl lg:text-6xl text-midnight leading-tight">
                 Format Listing Photos
                 <br />
-                <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary to-primary-end bg-clip-text text-transparent">
                   for the MLS in Seconds.
                 </span>
               </h1>
