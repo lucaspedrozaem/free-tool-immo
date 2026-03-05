@@ -222,7 +222,7 @@ export default function SocialMediaFormatterPage() {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
                     Background Fill
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                     {([
                       { mode: "blur" as FillMode, label: "Blurred Photo", desc: "Most popular" },
                       { mode: "crop" as FillMode, label: "Crop to Fill", desc: "No background" },

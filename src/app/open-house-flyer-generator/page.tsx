@@ -519,10 +519,10 @@ export default function OpenHouseFlyerGeneratorPage() {
                 {generating ? "Generating..." : "Generate Flyer"}
               </button>
             ) : (
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 py-3 bg-success text-white font-bold rounded-lg hover:bg-success-dark transition-colors text-lg"
+                  className="flex-1 py-3 bg-success text-white font-bold rounded-lg hover:bg-success-dark transition-colors text-base sm:text-lg"
                 >
                   Download Flyer (Print-Ready JPG)
                 </button>

@@ -264,32 +264,32 @@ export default function BlurPhotoPrivacyPage() {
           ) : (
             <div>
               {/* Toolbar */}
-              <div className="bg-white rounded-xl shadow-md p-4 mb-4 flex flex-wrap items-center gap-4">
+              <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 mb-4 space-y-3 sm:space-y-0 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-semibold text-gray-700">Brush:</label>
+                  <label className="text-sm font-semibold text-gray-700 shrink-0">Brush:</label>
                   <input
                     type="range"
                     min="10"
                     max="80"
                     value={brushSize}
                     onChange={(e) => setBrushSize(Number(e.target.value))}
-                    className="w-24 accent-primary"
+                    className="flex-1 sm:w-24 sm:flex-none accent-primary"
                   />
                   <span className="text-xs text-gray-500 w-8">{brushSize}px</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-semibold text-gray-700">Intensity:</label>
+                  <label className="text-sm font-semibold text-gray-700 shrink-0">Intensity:</label>
                   <input
                     type="range"
                     min="6"
                     max="40"
                     value={blurIntensity}
                     onChange={(e) => setBlurIntensity(Number(e.target.value))}
-                    className="w-24 accent-primary"
+                    className="flex-1 sm:w-24 sm:flex-none accent-primary"
                   />
                   <span className="text-xs text-gray-500 w-8">{blurIntensity}</span>
                 </div>
-                <div className="flex gap-2 ml-auto">
+                <div className="flex gap-2 sm:ml-auto">
                   <button
                     onClick={handleUndo}
                     disabled={history.length <= 1}

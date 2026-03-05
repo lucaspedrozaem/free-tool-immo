@@ -183,7 +183,7 @@ export default function HomePage() {
       <section className="relative py-16 md:py-24 px-4 overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[min(800px,200vw)] h-[min(800px,200vw)] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         <div className="relative max-w-4xl mx-auto text-center">
           {state === "upload" && (
             <>
@@ -209,7 +209,7 @@ export default function HomePage() {
                   alt="Real estate agent processing listing photos"
                   width={600}
                   height={338}
-                  className="mx-auto rounded-2xl"
+                  className="mx-auto rounded-2xl max-w-full h-auto"
                   priority
                 />
               </div>
@@ -287,7 +287,7 @@ export default function HomePage() {
                     </label>
                     {optimizeMLS && (
                       <div className="mt-3 pl-4 border-l-2 border-primary-light space-y-2">
-                        <div className="flex gap-2 items-center text-sm">
+                        <div className="flex flex-wrap gap-2 items-center text-sm">
                           <span className="text-gray-500">Resize to</span>
                           <input
                             type="number"

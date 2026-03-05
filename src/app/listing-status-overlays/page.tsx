@@ -312,7 +312,7 @@ export default function ListingStatusOverlaysPage() {
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
                     Ribbon Style
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {([
                       { style: "corner" as RibbonStyle, label: "Corner Ribbon", desc: "Top-left corner" },
                       { style: "banner-top" as RibbonStyle, label: "Top Banner", desc: "Full width top" },
