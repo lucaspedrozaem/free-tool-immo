@@ -27,8 +27,8 @@ export function Navbar() {
             <Image
               src="/logo.png"
               alt="MLS Photo Tools"
-              width={36}
-              height={36}
+              width={48}
+              height={48}
               className="rounded-md"
             />
             <span className="font-heading font-bold text-xl text-midnight">
