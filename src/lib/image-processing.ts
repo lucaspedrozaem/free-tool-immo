@@ -30,6 +30,52 @@ export interface ProcessingProgress {
   stage: string;
 }
 
+export interface ProcessingError {
+  message: string;
+  fileName?: string;
+}
+
+class ImageProcessingError extends Error {
+  fileName?: string;
+
+  constructor(message: string, fileName?: string) {
+    super(message);
+    this.name = "ImageProcessingError";
+    this.fileName = fileName;
+  }
+}
+
+export function normalizeProcessingError(
+  error: unknown,
+  fileName?: string
+): ProcessingError {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    const errorFileName =
+      "fileName" in error && typeof error.fileName === "string"
+        ? error.fileName
+        : fileName;
+
+    return {
+      message: error.message,
+      ...(errorFileName ? { fileName: errorFileName } : {}),
+    };
+  }
+
+  if (typeof error === "string") {
+    return { message: error, ...(fileName ? { fileName } : {}) };
+  }
+
+  return {
+    message: "We couldn't process this image. Please try again.",
+    ...(fileName ? { fileName } : {}),
+  };
+}
+
 function stripExifFromArrayBuffer(buffer: ArrayBuffer): ArrayBuffer {
   const view = new DataView(buffer);
   if (view.getUint16(0) !== 0xffd8) return buffer;
@@ -94,7 +140,10 @@ export async function processImage(
       });
       imageSource = Array.isArray(converted) ? converted[0] : converted;
     } catch {
-      throw new Error(`Failed to convert HEIC file: ${file.name}`);
+      throw new ImageProcessingError(
+        "We couldn't convert this HEIC image. Please try another file.",
+        file.name
+      );
     }
   }
 
@@ -231,8 +280,12 @@ export async function processImages(
       stage: "Processing",
     });
 
-    const result = await processImage(files[i], options, i);
-    results.push(result);
+    try {
+      const result = await processImage(files[i], options, i);
+      results.push(result);
+    } catch (error) {
+      throw normalizeProcessingError(error, files[i].name);
+    }
   }
 
   return results;
