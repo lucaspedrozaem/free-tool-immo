@@ -35,6 +35,7 @@ const toolCategories = [
       { name: "Online Image Resizer", href: "/online-image-resizer", desc: "Resize photos to any dimension", icon: "ph:resize" },
       { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper", desc: "Crop to 4:3, 16:9, 1:1 for MLS & social", icon: "ph:crop" },
       { name: "Batch Image Compressor", href: "/batch-image-compressor", desc: "Compress photos under 5MB for MLS uploads", icon: "ph:file-arrow-down" },
+      { name: "Photo Enhancer", href: "/photo-enhancer", desc: "Fix dark interiors — brightness, contrast & warmth", icon: "ph:sun-horizon" },
     ],
   },
   {
@@ -56,8 +57,9 @@ const toolCategories = [
       { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos", desc: "Add QR code to all listing photos in bulk", icon: "ph:qr-code" },
       { name: "Status Overlays", href: "/listing-status-overlays", desc: "Just Listed, Just Sold & more ribbons", icon: "ph:flag-pennant" },
       { name: "Photo Grid Maker", href: "/photo-grid-maker", desc: "Create 2x2 or 3x1 listing photo collages", icon: "ph:squares-four" },
-      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter", desc: "Vertical format for Stories, TikTok & Reels", icon: "ph:device-mobile" },
+      { name: "Social Media Formatter", href: "/social-media-photo-formatter", desc: "Stories, Reels, Feed & Facebook Cover sizes", icon: "ph:device-mobile" },
       { name: "Open House Flyer Maker", href: "/open-house-flyer-generator", desc: "Generate print-ready listing flyers", icon: "ph:newspaper-clipping" },
+      { name: "Before & After Photo", href: "/before-after-photo", desc: "Side-by-side comparison layouts for renovations", icon: "ph:arrows-split" },
     ],
   },
 ];
@@ -668,7 +670,7 @@ export default function HomePage() {
             Free Real Estate Photo Tools
           </h2>
           <p className="text-gray-500 text-center mb-14 max-w-xl mx-auto">
-            18 free tools, organized by workflow. Every tool runs in your
+            20 free tools, organized by workflow. Every tool runs in your
             browser and is designed for real estate professionals.
           </p>
 

@@ -45,7 +45,7 @@ const toolCategories = [
       { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos" },
       { name: "Status Overlays", href: "/listing-status-overlays" },
       { name: "Photo Grid Maker", href: "/photo-grid-maker" },
-      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
+      { name: "Social Media Formatter", href: "/social-media-photo-formatter" },
       { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
       { name: "Before & After Photo", href: "/before-after-photo" },
     ],
