@@ -30,6 +30,30 @@ export interface ProcessingProgress {
   stage: string;
 }
 
+export interface OutputProfile {
+  id: string;
+  label: string;
+  zipName?: string;
+  fileSuffix?: string;
+  options: ProcessingOptions;
+}
+
+export interface ProfileProcessingResult {
+  profileId: string;
+  profileLabel: string;
+  zipName: string;
+  images: ProcessedImage[];
+}
+
+function applyFileSuffix(filename: string, suffix?: string): string {
+  if (!suffix) return filename;
+  const extIndex = filename.lastIndexOf(".");
+  if (extIndex === -1) return `${filename}-${suffix}`;
+  const base = filename.slice(0, extIndex);
+  const ext = filename.slice(extIndex);
+  return `${base}-${suffix}${ext}`;
+}
+
 function stripExifFromArrayBuffer(buffer: ArrayBuffer): ArrayBuffer {
   const view = new DataView(buffer);
   if (view.getUint16(0) !== 0xffd8) return buffer;
@@ -236,6 +260,45 @@ export async function processImages(
   }
 
   return results;
+}
+
+export async function processImagesForProfiles(
+  files: File[],
+  profiles: OutputProfile[],
+  onProgress: (progress: ProcessingProgress) => void
+): Promise<ProfileProcessingResult[]> {
+  const allResults: ProfileProcessingResult[] = [];
+  const total = files.length * profiles.length;
+  let current = 0;
+
+  for (const profile of profiles) {
+    const profileImages: ProcessedImage[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      current += 1;
+      onProgress({
+        current,
+        total,
+        currentFile: files[i].name,
+        stage: `Processing ${profile.label}`,
+      });
+
+      const processed = await processImage(files[i], profile.options, i);
+      profileImages.push({
+        ...processed,
+        newName: applyFileSuffix(processed.newName, profile.fileSuffix),
+      });
+    }
+
+    allResults.push({
+      profileId: profile.id,
+      profileLabel: profile.label,
+      zipName: profile.zipName || profile.id,
+      images: profileImages,
+    });
+  }
+
+  return allResults;
 }
 
 function triggerDownload(blob: Blob, filename: string): void {

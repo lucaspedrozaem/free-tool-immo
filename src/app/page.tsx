@@ -8,13 +8,17 @@ import { FAQSection } from "@/components/FAQSection";
 import Image from "next/image";
 import Link from "next/link";
 import type {
+  OutputProfile,
   ProcessingOptions,
+  ProfileProcessingResult,
   ProcessedImage,
   ProcessingProgress,
 } from "@/lib/image-processing";
-import { processImages } from "@/lib/image-processing";
+import { processImagesForProfiles } from "@/lib/image-processing";
 
 type AppState = "upload" | "configure" | "processing" | "done";
+type WorkflowMode = "manual" | "listing-kit";
+type ListingKit = "mls-upload-ready" | "zillow-social-pack" | "privacy-safe";
 
 const toolCategories = [
   {
@@ -107,6 +111,12 @@ export default function HomePage() {
     stage: "Processing",
   });
   const [results, setResults] = useState<ProcessedImage[]>([]);
+  const [profileResults, setProfileResults] = useState<ProfileProcessingResult[]>([]);
+  const [workflowMode, setWorkflowMode] = useState<WorkflowMode>("manual");
+  const [listingKit, setListingKit] = useState<ListingKit>("mls-upload-ready");
+  const [exportMLS, setExportMLS] = useState(true);
+  const [exportSocial, setExportSocial] = useState(false);
+  const [exportWatermarked, setExportWatermarked] = useState(false);
 
   // Config state
   const [optimizeMLS, setOptimizeMLS] = useState(true);
@@ -129,41 +139,180 @@ export default function HomePage() {
     setState("configure");
   }, []);
 
-  const handleProcess = async () => {
-    setState("processing");
-
-    const options: ProcessingOptions = {
+  const buildManualProfiles = (): OutputProfile[] => {
+    const baseOptions: ProcessingOptions = {
       format: "jpeg",
     };
 
     if (optimizeMLS) {
-      options.resize = {
+      baseOptions.resize = {
         width: resizeWidth,
         height: resizeHeight,
         maintainAspect: true,
       };
-      options.compress = { maxSizeMB: compressBelow, quality: 0.92 };
+      baseOptions.compress = { maxSizeMB: compressBelow, quality: 0.92 };
     }
 
     if (stripExif) {
-      options.stripExif = true;
+      baseOptions.stripExif = true;
     }
 
     if (batchRename && renamePrefix) {
-      options.rename = { prefix: renamePrefix, startIndex: 1 };
+      baseOptions.rename = { prefix: renamePrefix, startIndex: 1 };
     }
 
-    if (addWatermark && watermarkText) {
-      options.watermark = {
-        text: watermarkText,
-        position: watermarkPosition,
-        opacity: watermarkOpacity,
-      };
+    const profiles: OutputProfile[] = [];
+
+    if (exportMLS) {
+      profiles.push({
+        id: "mls-master",
+        label: "MLS Master",
+        zipName: "mls-master",
+        fileSuffix: "mls",
+        options: { ...baseOptions },
+      });
+    }
+
+    if (exportSocial) {
+      profiles.push({
+        id: "social-ready",
+        label: "Social Variant",
+        zipName: "social-variant",
+        fileSuffix: "social",
+        options: {
+          ...baseOptions,
+          resize: { width: 1080, height: 1080, maintainAspect: true },
+          compress: { maxSizeMB: 2, quality: 0.9 },
+        },
+      });
+    }
+
+    if (exportWatermarked) {
+      profiles.push({
+        id: "watermarked",
+        label: "Watermarked Variant",
+        zipName: "watermarked-variant",
+        fileSuffix: "wm",
+        options: {
+          ...baseOptions,
+          watermark: {
+            text: watermarkText || "Listed by your agent",
+            position: watermarkPosition,
+            opacity: watermarkOpacity,
+          },
+        },
+      });
+    }
+
+    return profiles;
+  };
+
+  const buildListingKitProfiles = (): OutputProfile[] => {
+    if (listingKit === "mls-upload-ready") {
+      return [
+        {
+          id: "mls-upload-ready",
+          label: "MLS Upload Ready",
+          zipName: "mls-upload-ready",
+          fileSuffix: "mls",
+          options: {
+            format: "jpeg",
+            resize: { width: 2048, height: 1536, maintainAspect: true },
+            compress: { maxSizeMB: 5, quality: 0.92 },
+            stripExif: true,
+          },
+        },
+      ];
+    }
+
+    if (listingKit === "privacy-safe") {
+      return [
+        {
+          id: "privacy-safe",
+          label: "Privacy Safe",
+          zipName: "privacy-safe",
+          fileSuffix: "privacy",
+          options: {
+            format: "jpeg",
+            resize: { width: 1920, height: 1080, maintainAspect: true },
+            compress: { maxSizeMB: 4, quality: 0.9 },
+            stripExif: true,
+            watermark: {
+              text: "Privacy Protected",
+              position: "bottom-right",
+              opacity: 0.45,
+            },
+          },
+        },
+      ];
+    }
+
+    return [
+      {
+        id: "mls-master",
+        label: "MLS Master",
+        zipName: "zillow-social-pack-mls",
+        fileSuffix: "mls",
+        options: {
+          format: "jpeg",
+          resize: { width: 2048, height: 1536, maintainAspect: true },
+          compress: { maxSizeMB: 5, quality: 0.92 },
+          stripExif: true,
+        },
+      },
+      {
+        id: "social-variant",
+        label: "Social Variant",
+        zipName: "zillow-social-pack-social",
+        fileSuffix: "social",
+        options: {
+          format: "jpeg",
+          resize: { width: 1080, height: 1080, maintainAspect: true },
+          compress: { maxSizeMB: 2, quality: 0.9 },
+          stripExif: true,
+        },
+      },
+      {
+        id: "watermarked-variant",
+        label: "Watermarked Variant",
+        zipName: "zillow-social-pack-watermarked",
+        fileSuffix: "wm",
+        options: {
+          format: "jpeg",
+          resize: { width: 2048, height: 1536, maintainAspect: true },
+          compress: { maxSizeMB: 5, quality: 0.92 },
+          stripExif: true,
+          watermark: {
+            text: watermarkText || "Schedule a showing",
+            position: watermarkPosition,
+            opacity: watermarkOpacity,
+          },
+        },
+      },
+    ];
+  };
+
+  const handleProcess = async () => {
+    setState("processing");
+
+    const selectedProfiles =
+      workflowMode === "listing-kit"
+        ? buildListingKitProfiles()
+        : buildManualProfiles();
+
+    if (selectedProfiles.length === 0) {
+      setState("configure");
+      return;
     }
 
     try {
-      const processed = await processImages(files, options, setProgress);
-      setResults(processed);
+      const processedProfiles = await processImagesForProfiles(
+        files,
+        selectedProfiles,
+        setProgress
+      );
+      setProfileResults(processedProfiles);
+      setResults(processedProfiles.flatMap((profile) => profile.images));
       setState("done");
     } catch (err) {
       console.error("Processing error:", err);
@@ -174,6 +323,7 @@ export default function HomePage() {
   const handleReset = () => {
     setFiles([]);
     setResults([]);
+    setProfileResults([]);
     setState("upload");
   };
 
@@ -267,6 +417,95 @@ export default function HomePage() {
 
                 {/* Configuration Panel */}
                 <div className="bg-white rounded-xl shadow-md p-6 space-y-6">
+                  <div>
+                    <span className="font-semibold text-slate-dark block mb-3">
+                      Workflow Mode
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setWorkflowMode("manual")}
+                        className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                          workflowMode === "manual"
+                            ? "border-primary bg-primary-light text-primary"
+                            : "border-border text-gray-600 hover:border-primary/50"
+                        }`}
+                      >
+                        Manual
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWorkflowMode("listing-kit")}
+                        className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                          workflowMode === "listing-kit"
+                            ? "border-primary bg-primary-light text-primary"
+                            : "border-border text-gray-600 hover:border-primary/50"
+                        }`}
+                      >
+                        Listing Kit
+                      </button>
+                    </div>
+                  </div>
+
+                  {workflowMode === "listing-kit" && (
+                    <div className="bg-primary-light/50 border border-primary/20 rounded-lg p-4 space-y-3">
+                      <label className="block text-sm font-semibold text-slate-dark">
+                        One-click preset
+                      </label>
+                      <select
+                        value={listingKit}
+                        onChange={(e) =>
+                          setListingKit(e.target.value as ListingKit)
+                        }
+                        className="w-full border border-border rounded px-3 py-2 text-sm"
+                      >
+                        <option value="mls-upload-ready">MLS Upload Ready</option>
+                        <option value="zillow-social-pack">Zillow + Social Pack</option>
+                        <option value="privacy-safe">Privacy Safe</option>
+                      </select>
+                      <p className="text-xs text-gray-600">
+                        {listingKit === "zillow-social-pack"
+                          ? "Generates MLS Master, Social Variant, and Watermarked Variant in one run."
+                          : "Applies recommended settings automatically so you can process in one click."}
+                      </p>
+                    </div>
+                  )}
+
+                  {workflowMode === "manual" && (
+                    <div className="space-y-2 rounded-lg border border-border-light p-4">
+                      <span className="font-semibold text-slate-dark text-sm">
+                        Export Profiles (multi-output)
+                      </span>
+                      <label className="flex items-center justify-between text-sm text-gray-700">
+                        <span>MLS Master</span>
+                        <input
+                          type="checkbox"
+                          checked={exportMLS}
+                          onChange={(e) => setExportMLS(e.target.checked)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between text-sm text-gray-700">
+                        <span>Social Variant</span>
+                        <input
+                          type="checkbox"
+                          checked={exportSocial}
+                          onChange={(e) => setExportSocial(e.target.checked)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between text-sm text-gray-700">
+                        <span>Watermarked Variant</span>
+                        <input
+                          type="checkbox"
+                          checked={exportWatermarked}
+                          onChange={(e) => setExportWatermarked(e.target.checked)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                      </label>
+                    </div>
+                  )}
+
                   {/* MLS Optimization */}
                   <div>
                     <label className="flex items-center justify-between cursor-pointer">
@@ -459,8 +698,16 @@ export default function HomePage() {
                   onClick={handleProcess}
                   className="w-full bg-primary hover:bg-primary-dark text-white font-bold text-lg py-4 px-8 rounded-md transition-colors shadow-md hover:shadow-lg"
                 >
-                  Process {files.length} Photo{files.length !== 1 ? "s" : ""}{" "}
-                  Now
+                  Process {files.length} Photo{files.length !== 1 ? "s" : ""} as{" "}
+                  {workflowMode === "listing-kit"
+                    ? buildListingKitProfiles().length
+                    : Math.max(buildManualProfiles().length, 1)}{" "}
+                  Output
+                  {(workflowMode === "listing-kit"
+                    ? buildListingKitProfiles().length
+                    : Math.max(buildManualProfiles().length, 1)) !== 1
+                    ? "s"
+                    : ""}
                 </button>
               </div>
 
@@ -521,15 +768,38 @@ export default function HomePage() {
           {state === "processing" && <ProgressBar progress={progress} />}
 
           {state === "done" && (
-            <ResultsPanel
-              images={results}
-              onReset={handleReset}
-              zipName={
-                renamePrefix
-                  ? renamePrefix.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
-                  : "listing-photos"
-              }
-            />
+            <div className="space-y-4">
+              {profileResults.length > 1 && (
+                <div className="bg-primary-light/40 border border-primary/20 rounded-lg p-4 text-left">
+                  <p className="text-sm font-semibold text-slate-dark mb-2">
+                    Generated Export Profiles
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {profileResults.map((profile) => (
+                      <span
+                        key={profile.profileId}
+                        className="inline-flex items-center px-3 py-1 rounded-full bg-white text-xs font-medium text-primary border border-primary/30"
+                      >
+                        {profile.profileLabel} ({profile.images.length})
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <ResultsPanel
+                images={results}
+                onReset={handleReset}
+                zipName={
+                  workflowMode === "listing-kit"
+                    ? listingKit
+                    : renamePrefix
+                      ? renamePrefix
+                          .replace(/\s+/g, "-")
+                          .replace(/[^a-zA-Z0-9-]/g, "")
+                      : "listing-photos"
+                }
+              />
+            </div>
           )}
         </div>
       </section>
