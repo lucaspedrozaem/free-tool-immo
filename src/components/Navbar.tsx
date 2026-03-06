@@ -24,6 +24,7 @@ const toolCategories = [
       { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
       { name: "Batch Image Compressor", href: "/batch-image-compressor" },
       { name: "Photo Enhancer", href: "/photo-enhancer" },
+      { name: "Sky Replacement", href: "/sky-replacement" },
     ],
   },
   {
@@ -48,6 +49,7 @@ const toolCategories = [
       { name: "Social Media Formatter", href: "/social-media-photo-formatter" },
       { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
       { name: "Before & After Photo", href: "/before-after-photo" },
+      { name: "Listing Photo Reorder", href: "/listing-photo-reorder" },
     ],
   },
 ];
@@ -111,12 +113,31 @@ export function Navbar() {
               </div>
             ))}
 
-            <Link
-              href="/guides/how-to-resize-photos-for-mls"
-              className="px-3 py-2 text-sm font-medium text-slate-dark hover:text-primary transition-colors rounded-lg hover:bg-primary-light/50"
+            <div
+              className="relative"
+              onMouseEnter={() => setOpenCategory("Guides")}
+              onMouseLeave={() => setOpenCategory(null)}
             >
-              Guides
-            </Link>
+              <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-dark hover:text-primary transition-colors rounded-lg hover:bg-primary-light/50">
+                Guides
+                <Icon
+                  icon="ph:caret-down"
+                  className={`w-3 h-3 text-gray-400 transition-transform ${openCategory === "Guides" ? "rotate-180" : ""}`}
+                />
+              </button>
+              {openCategory === "Guides" && (
+                <div className="absolute top-full left-0 pt-1 z-50 min-w-[240px]">
+                  <div className="bg-white rounded-xl shadow-xl border border-border-light py-2">
+                    <Link href="/guides/how-to-resize-photos-for-mls" className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors">How to Resize Photos for MLS</Link>
+                    <Link href="/guides/how-to-fix-dark-listing-photos" className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors">How to Fix Dark Listing Photos</Link>
+                    <Link href="/guides/instagram-for-realtors" className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors">Instagram for Realtors</Link>
+                    <Link href="/guides/best-real-estate-watermark-apps" className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors">Best Watermark Apps</Link>
+                    <Link href="/guides/zillow-photo-size-requirements-2026" className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors">Zillow Photo Requirements</Link>
+                    <Link href="/guides/california-digital-photo-law-compliance" className="block px-4 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary transition-colors">California Photo Law</Link>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="ml-2 bg-gradient-to-r from-primary to-primary-end text-white text-xs font-bold px-3 py-1.5 rounded-full">
               100% Free

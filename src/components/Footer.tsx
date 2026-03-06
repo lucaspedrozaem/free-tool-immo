@@ -19,6 +19,7 @@ const footerCategories = [
       { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
       { name: "Batch Image Compressor", href: "/batch-image-compressor" },
       { name: "Photo Enhancer", href: "/photo-enhancer" },
+      { name: "Sky Replacement", href: "/sky-replacement" },
     ],
   },
   {
@@ -38,9 +39,10 @@ const footerCategories = [
       { name: "Agent Intro/Outro Card", href: "/agent-intro-card" },
       { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos" },
       { name: "Photo Grid Maker", href: "/photo-grid-maker" },
-      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
+      { name: "Social Media Formatter", href: "/social-media-photo-formatter" },
       { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
       { name: "Before & After Photo", href: "/before-after-photo" },
+      { name: "Listing Photo Reorder", href: "/listing-photo-reorder" },
     ],
   },
 ];
@@ -61,6 +63,14 @@ const guideLinks = [
   {
     name: "Best Watermark Apps",
     href: "/guides/best-real-estate-watermark-apps",
+  },
+  {
+    name: "Instagram for Realtors",
+    href: "/guides/instagram-for-realtors",
+  },
+  {
+    name: "How to Fix Dark Listing Photos",
+    href: "/guides/how-to-fix-dark-listing-photos",
   },
 ];
 

@@ -18,7 +18,7 @@ const faqItems = [
   {
     question: "What adjustments can I make?",
     answer:
-      "You can adjust brightness, contrast, exposure (overall lightness), saturation (color intensity), and warmth (color temperature). Each slider goes from -100 to +100 with 0 being no change.",
+      "You can adjust brightness, contrast, exposure (overall lightness), saturation (color intensity), warmth (color temperature), and sharpness. Each slider goes from -100 to +100 with 0 being no change.",
   },
   {
     question: "Will this fix dark or overexposed photos?",
@@ -50,6 +50,7 @@ async function enhancePhoto(
     exposure: number;
     saturation: number;
     warmth: number;
+    sharpen: number;
   }
 ): Promise<ProcessedImage> {
   const bitmap = await createImageBitmap(file);
@@ -86,6 +87,30 @@ async function enhancePhoto(
     ctx.fillRect(0, 0, bitmap.width, bitmap.height);
     ctx.globalCompositeOperation = "source-over";
     ctx.globalAlpha = 1;
+  }
+
+  // Sharpen using unsharp mask: extract blurred version, subtract from original
+  if (config.sharpen !== 0) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // Create a blurred copy using a second canvas
+    const blurCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+    const blurCtx = blurCanvas.getContext("2d")!;
+    const blurRadius = Math.max(0.5, Math.abs(config.sharpen) / 50);
+    blurCtx.filter = `blur(${blurRadius}px)`;
+    blurCtx.drawImage(canvas, 0, 0);
+    blurCtx.filter = "none";
+
+    const blurData = blurCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const amount = config.sharpen / 50; // -2 to +2
+
+    for (let i = 0; i < data.length; i += 4) {
+      data[i]     = Math.max(0, Math.min(255, data[i]     + amount * (data[i]     - blurData[i])));
+      data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + amount * (data[i + 1] - blurData[i + 1])));
+      data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + amount * (data[i + 2] - blurData[i + 2])));
+    }
+    ctx.putImageData(imageData, 0, 0);
   }
 
   bitmap.close();
@@ -156,6 +181,7 @@ export default function PhotoEnhancerPage() {
   const [exposure, setExposure] = useState(0);
   const [saturation, setSaturation] = useState(0);
   const [warmth, setWarmth] = useState(0);
+  const [sharpen, setSharpen] = useState(0);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -181,7 +207,7 @@ export default function PhotoEnhancerPage() {
         current: i + 1, total: files.length, currentFile: files[i].name, stage: "Enhancing",
       });
       const result = await enhancePhoto(files[i], {
-        brightness, contrast, exposure, saturation, warmth,
+        brightness, contrast, exposure, saturation, warmth, sharpen,
       });
       processed.push(result);
     }
@@ -202,6 +228,7 @@ export default function PhotoEnhancerPage() {
     setExposure(0);
     setSaturation(0);
     setWarmth(0);
+    setSharpen(0);
   };
 
   // CSS filter for live preview
@@ -222,7 +249,7 @@ export default function PhotoEnhancerPage() {
                 Photo Enhancer
               </h1>
               <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                Adjust brightness, contrast, exposure, saturation, and warmth on your listing photos. Batch enhance up to 50 photos at once.
+                Adjust brightness, contrast, exposure, saturation, warmth, and sharpness on your listing photos. Batch enhance up to 50 photos at once.
               </p>
               <div className="mt-8">
                 <PhotoDropzone onFiles={handleFiles} />
@@ -261,31 +288,32 @@ export default function PhotoEnhancerPage() {
                   <EnhanceSlider label="Exposure" icon="📷" value={exposure} onChange={setExposure} />
                   <EnhanceSlider label="Saturation" icon="🎨" value={saturation} onChange={setSaturation} />
                   <EnhanceSlider label="Warmth" icon="🌡" value={warmth} onChange={setWarmth} />
+                  <EnhanceSlider label="Sharpen" icon="△" value={sharpen} onChange={setSharpen} />
 
                   {/* Quick presets */}
                   <div className="pt-3 border-t border-gray-100">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Quick Presets</label>
                     <div className="grid grid-cols-2 gap-2">
                       <button
-                        onClick={() => { setBrightness(15); setContrast(10); setExposure(10); setSaturation(10); setWarmth(5); }}
+                        onClick={() => { setBrightness(15); setContrast(10); setExposure(10); setSaturation(10); setWarmth(5); setSharpen(15); }}
                         className="px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:border-primary/40 hover:text-primary transition-colors"
                       >
                         Brighten Interior
                       </button>
                       <button
-                        onClick={() => { setBrightness(5); setContrast(20); setExposure(0); setSaturation(15); setWarmth(0); }}
+                        onClick={() => { setBrightness(5); setContrast(20); setExposure(0); setSaturation(15); setWarmth(0); setSharpen(25); }}
                         className="px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:border-primary/40 hover:text-primary transition-colors"
                       >
                         Vivid & Punchy
                       </button>
                       <button
-                        onClick={() => { setBrightness(0); setContrast(5); setExposure(0); setSaturation(-20); setWarmth(-10); }}
+                        onClick={() => { setBrightness(0); setContrast(5); setExposure(0); setSaturation(-20); setWarmth(-10); setSharpen(10); }}
                         className="px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:border-primary/40 hover:text-primary transition-colors"
                       >
                         Cool & Clean
                       </button>
                       <button
-                        onClick={() => { setBrightness(10); setContrast(10); setExposure(5); setSaturation(5); setWarmth(15); }}
+                        onClick={() => { setBrightness(10); setContrast(10); setExposure(5); setSaturation(5); setWarmth(15); setSharpen(10); }}
                         className="px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:border-primary/40 hover:text-primary transition-colors"
                       >
                         Warm & Inviting
@@ -309,9 +337,9 @@ export default function PhotoEnhancerPage() {
                       />
                     </div>
                   )}
-                  {warmth !== 0 && (
+                  {(warmth !== 0 || sharpen !== 0) && (
                     <p className="text-xs text-gray-400 mt-2">
-                      Warmth adjustment is applied during processing (not shown in live preview).
+                      Warmth and sharpen adjustments are applied during processing (not shown in live preview).
                     </p>
                   )}
                   <canvas ref={canvasRef} className="hidden" />

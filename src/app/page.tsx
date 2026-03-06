@@ -36,6 +36,7 @@ const toolCategories = [
       { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper", desc: "Crop to 4:3, 16:9, 1:1 for MLS & social", icon: "ph:crop" },
       { name: "Batch Image Compressor", href: "/batch-image-compressor", desc: "Compress photos under 5MB for MLS uploads", icon: "ph:file-arrow-down" },
       { name: "Photo Enhancer", href: "/photo-enhancer", desc: "Fix dark interiors — brightness, contrast & warmth", icon: "ph:sun-horizon" },
+      { name: "Sky Replacement", href: "/sky-replacement", desc: "Brighten overcast skies or replace with blue gradient", icon: "ph:cloud-sun" },
     ],
   },
   {
@@ -60,6 +61,7 @@ const toolCategories = [
       { name: "Social Media Formatter", href: "/social-media-photo-formatter", desc: "Stories, Reels, Feed & Facebook Cover sizes", icon: "ph:device-mobile" },
       { name: "Open House Flyer Maker", href: "/open-house-flyer-generator", desc: "Generate print-ready listing flyers", icon: "ph:newspaper-clipping" },
       { name: "Before & After Photo", href: "/before-after-photo", desc: "Side-by-side comparison layouts for renovations", icon: "ph:arrows-split" },
+      { name: "Listing Photo Reorder", href: "/listing-photo-reorder", desc: "Drag-and-drop photo sequencing for MLS upload", icon: "ph:sort-ascending" },
     ],
   },
 ];
@@ -670,7 +672,7 @@ export default function HomePage() {
             Free Real Estate Photo Tools
           </h2>
           <p className="text-gray-500 text-center mb-14 max-w-xl mx-auto">
-            20 free tools, organized by workflow. Every tool runs in your
+            22 free tools, organized by workflow. Every tool runs in your
             browser and is designed for real estate professionals.
           </p>
 
