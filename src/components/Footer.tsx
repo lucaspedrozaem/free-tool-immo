@@ -18,6 +18,7 @@ const footerCategories = [
       { name: "Online Image Resizer", href: "/online-image-resizer" },
       { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper" },
       { name: "Batch Image Compressor", href: "/batch-image-compressor" },
+      { name: "Photo Enhancer", href: "/photo-enhancer" },
     ],
   },
   {
@@ -39,6 +40,7 @@ const footerCategories = [
       { name: "Photo Grid Maker", href: "/photo-grid-maker" },
       { name: "9:16 Social Formatter", href: "/social-media-photo-formatter" },
       { name: "Open House Flyer Maker", href: "/open-house-flyer-generator" },
+      { name: "Before & After Photo", href: "/before-after-photo" },
     ],
   },
 ];

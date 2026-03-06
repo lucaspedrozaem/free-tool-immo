@@ -20,6 +20,7 @@ const CANVAS_PRESETS = [
   { label: "9:16 - Stories / TikTok", width: 1080, height: 1920 },
   { label: "4:5 - Instagram Post", width: 1080, height: 1350 },
   { label: "1:1 - Instagram Square", width: 1080, height: 1080 },
+  { label: "16:9 - Facebook Cover", width: 1200, height: 630 },
 ];
 
 const faqItems = [
@@ -39,6 +40,11 @@ const faqItems = [
       "Yes! TikTok, Instagram Reels, YouTube Shorts, and Facebook Stories all use the same 9:16 vertical format. Photos formatted with this tool work perfectly on all these platforms.",
   },
   {
+    question: "Can I add text like 'Just Listed' to the photo?",
+    answer:
+      "Yes! Choose from presets like Just Listed, Just Sold, Open House, Price Reduced, or Coming Soon. You can also enter custom top and bottom text - perfect for adding property addresses, prices, or agent info.",
+  },
+  {
     question: "Can I add my branding color instead of blur?",
     answer:
       "Yes! You can choose between blurred background, solid black, solid white, or a custom brand color for the fill areas above and below your photo.",
@@ -50,12 +56,24 @@ const faqItems = [
   },
 ];
 
+const TEXT_PRESETS = [
+  { label: "None", topText: "", bottomText: "" },
+  { label: "Just Listed", topText: "JUST LISTED", bottomText: "" },
+  { label: "Just Sold", topText: "JUST SOLD", bottomText: "" },
+  { label: "Open House", topText: "OPEN HOUSE", bottomText: "" },
+  { label: "Price Reduced", topText: "PRICE REDUCED", bottomText: "" },
+  { label: "Coming Soon", topText: "COMING SOON", bottomText: "" },
+];
+
 async function formatForSocial(
   file: File,
   canvasWidth: number,
   canvasHeight: number,
   fillMode: FillMode,
-  brandColor: string
+  brandColor: string,
+  topText: string,
+  bottomText: string,
+  textColor: string
 ): Promise<ProcessedImage> {
   const bitmap = await createImageBitmap(file);
   const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
@@ -96,6 +114,48 @@ async function formatForSocial(
     const drawY = Math.round((canvasHeight - drawH) / 2);
     ctx.drawImage(bitmap, drawX, drawY, drawW, drawH);
   }
+  // Text overlays
+  if (topText) {
+    const fontSize = Math.round(canvasWidth * 0.065);
+    ctx.font = `bold ${fontSize}px 'DM Sans', Inter, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    // Background pill
+    const metrics = ctx.measureText(topText);
+    const pillW = metrics.width + fontSize * 1.5;
+    const pillH = fontSize * 1.8;
+    const pillX = (canvasWidth - pillW) / 2;
+    const pillY = canvasHeight * 0.06;
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    const r = pillH / 2;
+    ctx.beginPath();
+    ctx.moveTo(pillX + r, pillY);
+    ctx.lineTo(pillX + pillW - r, pillY);
+    ctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + r, r);
+    ctx.lineTo(pillX + pillW, pillY + pillH - r);
+    ctx.arcTo(pillX + pillW, pillY + pillH, pillX + pillW - r, pillY + pillH, r);
+    ctx.lineTo(pillX + r, pillY + pillH);
+    ctx.arcTo(pillX, pillY + pillH, pillX, pillY + pillH - r, r);
+    ctx.lineTo(pillX, pillY + r);
+    ctx.arcTo(pillX, pillY, pillX + r, pillY, r);
+    ctx.fill();
+    ctx.fillStyle = textColor;
+    ctx.fillText(topText, canvasWidth / 2, pillY + pillH * 0.2);
+  }
+
+  if (bottomText) {
+    const fontSize = Math.round(canvasWidth * 0.045);
+    ctx.font = `600 ${fontSize}px 'DM Sans', Inter, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    // Background bar
+    const barH = fontSize * 2.2;
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(0, canvasHeight - barH, canvasWidth, barH);
+    ctx.fillStyle = textColor;
+    ctx.fillText(bottomText, canvasWidth / 2, canvasHeight - barH * 0.3);
+  }
+
   bitmap.close();
 
   const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
@@ -126,6 +186,12 @@ export default function SocialMediaFormatterPage() {
   const [colorAutoDetected, setColorAutoDetected] = useState(false);
   const logoRef = useRef<HTMLInputElement>(null);
 
+  // Text overlay
+  const [textPresetIndex, setTextPresetIndex] = useState(0);
+  const [topText, setTopText] = useState("");
+  const [bottomText, setBottomText] = useState("");
+  const [textColor, setTextColor] = useState("#FFFFFF");
+
   const handleFiles = useCallback((newFiles: File[]) => {
     setFiles(newFiles);
     setState("configure");
@@ -143,7 +209,8 @@ export default function SocialMediaFormatterPage() {
         stage: "Formatting",
       });
       const result = await formatForSocial(
-        files[i], preset.width, preset.height, fillMode, brandColor
+        files[i], preset.width, preset.height, fillMode, brandColor,
+        topText, bottomText, textColor
       );
       processed.push(result);
     }
@@ -297,6 +364,67 @@ export default function SocialMediaFormatterPage() {
                     <button onClick={() => logoRef.current?.click()} className="border-2 border-dashed border-gray-200 rounded-lg px-4 py-2.5 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors">
                       + Upload logo to auto-detect brand color
                     </button>
+                  )}
+                </div>
+
+                {/* Text Overlay */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Text Overlay <span className="font-normal text-gray-400">(optional)</span>
+                  </label>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                    {TEXT_PRESETS.map((preset, i) => (
+                      <button
+                        key={preset.label}
+                        onClick={() => {
+                          setTextPresetIndex(i);
+                          setTopText(preset.topText);
+                          setBottomText(preset.bottomText);
+                        }}
+                        className={`px-2 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                          textPresetIndex === i
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-gray-200 text-gray-600 hover:border-primary/40"
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                  {textPresetIndex !== 0 && (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Top Text</label>
+                          <input
+                            type="text"
+                            value={topText}
+                            onChange={(e) => { setTopText(e.target.value.toUpperCase()); setTextPresetIndex(-1); }}
+                            placeholder="JUST LISTED"
+                            className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Bottom Text</label>
+                          <input
+                            type="text"
+                            value={bottomText}
+                            onChange={(e) => setBottomText(e.target.value)}
+                            placeholder="123 Main St • $450,000"
+                            className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-gray-500">Text Color:</label>
+                        <input
+                          type="color"
+                          value={textColor}
+                          onChange={(e) => setTextColor(e.target.value)}
+                          className="w-7 h-7 rounded cursor-pointer border border-gray-300"
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
 
