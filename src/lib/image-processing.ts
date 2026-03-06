@@ -30,6 +30,31 @@ export interface ProcessingProgress {
   stage: string;
 }
 
+export interface ProcessImagesOptions {
+  concurrency?: number;
+  signal?: AbortSignal;
+}
+
+export class ProcessingAbortedError extends Error {
+  partialResults: ProcessedImage[];
+
+  constructor(partialResults: ProcessedImage[]) {
+    super("Image processing was cancelled");
+    this.name = "ProcessingAbortedError";
+    this.partialResults = partialResults;
+  }
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (!signal?.aborted) {
+    return;
+  }
+
+  throw signal.reason instanceof Error
+    ? signal.reason
+    : new DOMException("Image processing aborted", "AbortError");
+}
+
 function stripExifFromArrayBuffer(buffer: ArrayBuffer): ArrayBuffer {
   const view = new DataView(buffer);
   if (view.getUint16(0) !== 0xffd8) return buffer;
@@ -219,23 +244,58 @@ export async function processImage(
 export async function processImages(
   files: File[],
   options: ProcessingOptions,
-  onProgress: (progress: ProcessingProgress) => void
+  onProgress: (progress: ProcessingProgress) => void,
+  config: ProcessImagesOptions = {}
 ): Promise<ProcessedImage[]> {
-  const results: ProcessedImage[] = [];
+  const { signal } = config;
+  const normalizedConcurrency = Math.max(1, Math.min(4, config.concurrency ?? 3));
+  const resultsByIndex: Array<ProcessedImage | undefined> = new Array(files.length);
+  let nextIndex = 0;
+  let completed = 0;
 
-  for (let i = 0; i < files.length; i++) {
-    onProgress({
-      current: i + 1,
-      total: files.length,
-      currentFile: files[i].name,
-      stage: "Processing",
-    });
+  const worker = async () => {
+    while (true) {
+      throwIfAborted(signal);
+      const index = nextIndex;
+      if (index >= files.length) {
+        return;
+      }
 
-    const result = await processImage(files[i], options, i);
-    results.push(result);
+      nextIndex += 1;
+      const file = files[index];
+      const result = await processImage(file, options, index);
+      resultsByIndex[index] = result;
+      completed += 1;
+      onProgress({
+        current: completed,
+        total: files.length,
+        currentFile: file.name,
+        stage: "Processing",
+      });
+    }
+  };
+
+  const workerCount = Math.min(normalizedConcurrency, files.length);
+  const workers = Array.from({ length: workerCount }, () => worker());
+
+  try {
+    await Promise.all(workers);
+  } catch (error) {
+    if (
+      signal?.aborted ||
+      (error instanceof DOMException && error.name === "AbortError")
+    ) {
+      const partialResults = resultsByIndex.filter(
+        (result): result is ProcessedImage => Boolean(result)
+      );
+      throw new ProcessingAbortedError(partialResults);
+    }
+    throw error;
   }
 
-  return results;
+  return resultsByIndex.filter(
+    (result): result is ProcessedImage => Boolean(result)
+  );
 }
 
 function triggerDownload(blob: Blob, filename: string): void {

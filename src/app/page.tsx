@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
@@ -12,7 +12,7 @@ import type {
   ProcessedImage,
   ProcessingProgress,
 } from "@/lib/image-processing";
-import { processImages } from "@/lib/image-processing";
+import { ProcessingAbortedError, processImages } from "@/lib/image-processing";
 
 type AppState = "upload" | "configure" | "processing" | "done";
 
@@ -107,6 +107,8 @@ export default function HomePage() {
     stage: "Processing",
   });
   const [results, setResults] = useState<ProcessedImage[]>([]);
+  const [wasCancelled, setWasCancelled] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Config state
   const [optimizeMLS, setOptimizeMLS] = useState(true);
@@ -130,6 +132,10 @@ export default function HomePage() {
   }, []);
 
   const handleProcess = async () => {
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+    setResults([]);
+    setWasCancelled(false);
     setState("processing");
 
     const options: ProcessingOptions = {
@@ -162,18 +168,35 @@ export default function HomePage() {
     }
 
     try {
-      const processed = await processImages(files, options, setProgress);
+      const processed = await processImages(files, options, setProgress, {
+        concurrency: 3,
+        signal: abortController.signal,
+      });
       setResults(processed);
       setState("done");
     } catch (err) {
-      console.error("Processing error:", err);
-      setState("configure");
+      if (err instanceof ProcessingAbortedError) {
+        setResults(err.partialResults);
+        setWasCancelled(true);
+        setState("done");
+      } else {
+        console.error("Processing error:", err);
+        setState("configure");
+      }
+    } finally {
+      abortControllerRef.current = null;
     }
   };
 
+  const handleCancelProcessing = () => {
+    abortControllerRef.current?.abort();
+  };
+
   const handleReset = () => {
+    abortControllerRef.current?.abort();
     setFiles([]);
     setResults([]);
+    setWasCancelled(false);
     setState("upload");
   };
 
@@ -518,12 +541,23 @@ export default function HomePage() {
             </div>
           )}
 
-          {state === "processing" && <ProgressBar progress={progress} />}
+          {state === "processing" && (
+            <div className="space-y-4">
+              <ProgressBar progress={progress} />
+              <button
+                onClick={handleCancelProcessing}
+                className="w-full sm:w-auto px-4 py-2 border border-border text-slate-dark rounded-md hover:bg-ash transition-colors"
+              >
+                Cancel processing
+              </button>
+            </div>
+          )}
 
           {state === "done" && (
             <ResultsPanel
               images={results}
               onReset={handleReset}
+              wasCancelled={wasCancelled}
               zipName={
                 renamePrefix
                   ? renamePrefix.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
