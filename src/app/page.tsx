@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
@@ -100,6 +100,7 @@ const faqItems = [
 export default function HomePage() {
   const [state, setState] = useState<AppState>("upload");
   const [files, setFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [progress, setProgress] = useState<ProcessingProgress>({
     current: 0,
     total: 0,
@@ -128,6 +129,15 @@ export default function HomePage() {
     setFiles(newFiles);
     setState("configure");
   }, []);
+
+  useEffect(() => {
+    const urls = files.map((file) => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [files]);
 
   const handleProcess = async () => {
     setState("processing");
@@ -172,6 +182,8 @@ export default function HomePage() {
   };
 
   const handleReset = () => {
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    setPreviewUrls([]);
     setFiles([]);
     setResults([]);
     setState("upload");
@@ -248,7 +260,7 @@ export default function HomePage() {
                         {f.type.startsWith("image/") &&
                         !f.name.toLowerCase().endsWith(".heic") ? (
                           <img
-                            src={URL.createObjectURL(f)}
+                            src={previewUrls[i]}
                             alt={f.name}
                             className="w-full h-full object-cover"
                           />
