@@ -5,6 +5,7 @@ import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
+import { extractDominantColor } from "@/lib/extract-dominant-color";
 const faqItems = [
   {
     question: "What size is the flyer?",
@@ -43,10 +44,14 @@ export default function OpenHouseFlyerGeneratorPage() {
   const [agentPhone, setAgentPhone] = useState("");
   const [brokerage, setBrokerage] = useState("");
   const [accentColor, setAccentColor] = useState("#0165bf");
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [colorAutoDetected, setColorAutoDetected] = useState(false);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [resultBlob, setResultBlob] = useState<Blob | null>(null);
   const [generating, setGenerating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const dragIndexRef = useRef<number | null>(null);
 
   const handleBulkUpload = useCallback((fileList: FileList | File[]) => {
@@ -219,17 +224,34 @@ export default function OpenHouseFlyerGeneratorPage() {
     ctx.fillStyle = accentColor;
     ctx.fillRect(0, H - footerH, W, footerH);
 
+    // Brokerage logo in footer
+    let logoOffsetX = 0;
+    if (logoFile) {
+      const logoBm = await createImageBitmap(logoFile);
+      const logoMaxH = 80;
+      const logoMaxW = 300;
+      const logoScale = Math.min(logoMaxW / logoBm.width, logoMaxH / logoBm.height);
+      const lw = Math.round(logoBm.width * logoScale);
+      const lh = Math.round(logoBm.height * logoScale);
+      const lx = pad;
+      const ly = H - footerH + Math.round((footerH - lh) / 2);
+      ctx.drawImage(logoBm, lx, ly, lw, lh);
+      logoBm.close();
+      logoOffsetX = lw + pad;
+    }
+
+    const textCenterX = logoFile ? (pad + logoOffsetX + (W - pad)) / 2 : W / 2;
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
     if (agentName) {
       ctx.font = "bold 48px 'DM Sans', Inter, sans-serif";
-      ctx.fillText(agentName, W / 2, H - footerH + 90);
+      ctx.fillText(agentName, textCenterX, H - footerH + 90);
     }
     const contactLine = [agentPhone, brokerage].filter(Boolean).join("  |  ");
     if (contactLine) {
       ctx.font = "32px 'DM Sans', Inter, sans-serif";
       ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.fillText(contactLine, W / 2, H - footerH + 160);
+      ctx.fillText(contactLine, textCenterX, H - footerH + 160);
     }
 
     const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
@@ -452,14 +474,14 @@ export default function OpenHouseFlyerGeneratorPage() {
                   <input
                     type="color"
                     value={accentColor}
-                    onChange={(e) => { setAccentColor(e.target.value); setResultUrl(null); }}
+                    onChange={(e) => { setAccentColor(e.target.value); setColorAutoDetected(false); setResultUrl(null); }}
                     className="w-10 h-10 rounded cursor-pointer border border-gray-300"
                   />
                   <div className="flex gap-1.5">
                     {["#0165bf", "#0F172A", "#059669", "#DC2626", "#7C3AED", "#D97706"].map((c) => (
                       <button
                         key={c}
-                        onClick={() => { setAccentColor(c); setResultUrl(null); }}
+                        onClick={() => { setAccentColor(c); setColorAutoDetected(false); setResultUrl(null); }}
                         className={`w-7 h-7 rounded-full border-2 transition-all ${
                           accentColor === c ? "border-gray-800 scale-110" : "border-gray-200"
                         }`}
@@ -468,6 +490,37 @@ export default function OpenHouseFlyerGeneratorPage() {
                     ))}
                   </div>
                 </div>
+                {colorAutoDetected && (
+                  <p className="text-xs text-primary font-medium mt-1">Auto-detected from logo</p>
+                )}
+              </div>
+
+              {/* Brokerage logo upload */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Brokerage Logo <span className="font-normal text-gray-400">(optional)</span></label>
+                <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const url = URL.createObjectURL(file);
+                  setLogoFile(file);
+                  setLogoPreview(url);
+                  setResultUrl(null);
+                  const color = await extractDominantColor(url);
+                  if (color) {
+                    setAccentColor(color);
+                    setColorAutoDetected(true);
+                  }
+                }} />
+                {logoPreview ? (
+                  <div className="flex items-center gap-3">
+                    <img src={logoPreview} alt="Logo" className="w-12 h-12 rounded-lg object-contain border border-gray-200 bg-white p-1" />
+                    <button onClick={() => { setLogoFile(null); setLogoPreview(null); setColorAutoDetected(false); setResultUrl(null); }} className="text-xs text-gray-400 hover:text-red-500">Remove</button>
+                  </div>
+                ) : (
+                  <button onClick={() => logoInputRef.current?.click()} className="border-2 border-dashed border-gray-200 rounded-lg px-4 py-2.5 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors">
+                    + Upload logo (auto-detects accent color)
+                  </button>
+                )}
               </div>
 
               <hr className="border-gray-200" />

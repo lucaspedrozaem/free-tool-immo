@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
@@ -11,6 +11,7 @@ import type {
   ProcessedImage,
   ProcessingProgress,
 } from "@/lib/image-processing";
+import { extractDominantColor } from "@/lib/extract-dominant-color";
 
 type AppState = "upload" | "configure" | "processing" | "done";
 type RibbonStyle = "corner" | "banner-top" | "banner-bottom";
@@ -173,6 +174,9 @@ export default function ListingStatusOverlaysPage() {
   const [customColor, setCustomColor] = useState("#2563EB");
   const [useCustom, setUseCustom] = useState(false);
   const [ribbonStyle, setRibbonStyle] = useState<RibbonStyle>("corner");
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [colorAutoDetected, setColorAutoDetected] = useState(false);
+  const logoRef = useRef<HTMLInputElement>(null);
 
   const activeText = useCustom ? customText : STATUS_PRESETS[selectedPreset].text;
   const activeColor = useCustom ? customColor : STATUS_PRESETS[selectedPreset].color;
@@ -300,10 +304,42 @@ export default function ListingStatusOverlaysPage() {
                       <input
                         type="color"
                         value={customColor}
-                        onChange={(e) => setCustomColor(e.target.value)}
+                        onChange={(e) => { setCustomColor(e.target.value); setColorAutoDetected(false); }}
                         className="w-10 h-10 rounded cursor-pointer border border-gray-300"
                       />
                     </div>
+                  )}
+                </div>
+
+                {/* Brand Logo → auto-detect color */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Brand Logo <span className="font-normal text-gray-400">(optional - auto-detects color)</span>
+                  </label>
+                  <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const url = URL.createObjectURL(file);
+                    setLogoPreview(url);
+                    const color = await extractDominantColor(url);
+                    if (color) {
+                      setCustomColor(color);
+                      setUseCustom(true);
+                      setColorAutoDetected(true);
+                    }
+                  }} />
+                  {logoPreview ? (
+                    <div className="flex items-center gap-3">
+                      <img src={logoPreview} alt="Logo" className="w-12 h-12 rounded-lg object-contain border border-gray-200 bg-white p-1" />
+                      {colorAutoDetected && (
+                        <span className="text-xs text-primary font-medium">Color auto-detected from logo</span>
+                      )}
+                      <button onClick={() => { setLogoPreview(null); setColorAutoDetected(false); }} className="text-xs text-gray-400 hover:text-red-500 ml-auto">Remove</button>
+                    </div>
+                  ) : (
+                    <button onClick={() => logoRef.current?.click()} className="border-2 border-dashed border-gray-200 rounded-lg px-4 py-2.5 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors">
+                      + Upload logo to auto-detect brand color
+                    </button>
                   )}
                 </div>
 
