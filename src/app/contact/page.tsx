@@ -37,7 +37,7 @@ export default function ContactPage() {
         {submitted ? (
           <div className="mt-10 bg-white rounded-xl shadow-md p-8 text-center">
             <div className="w-14 h-14 mx-auto mb-4 bg-success/10 rounded-full flex items-center justify-center">
-              <Icon icon="lucide:check" className="w-7 h-7 text-success" />
+              <Icon icon="ph:check-circle" className="w-7 h-7 text-success" />
             </div>
             <h2 className="font-heading font-bold text-xl text-midnight">
               Your email client should have opened

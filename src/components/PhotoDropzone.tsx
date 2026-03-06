@@ -49,7 +49,7 @@ export function PhotoDropzone({
         <input {...getInputProps()} />
         <div className="flex flex-col items-center gap-3">
           <Icon
-            icon="lucide:upload"
+            icon="ph:cloud-arrow-up"
             className={`w-10 h-10 ${isDragActive ? "text-primary" : "text-border"}`}
           />
           <div>
@@ -82,7 +82,7 @@ export function PhotoDropzone({
           className={`w-16 h-16 rounded-full flex items-center justify-center ${isDragActive ? "bg-primary/10" : "bg-gray-100"}`}
         >
           <Icon
-            icon="lucide:upload"
+            icon="ph:cloud-arrow-up"
             className={`w-8 h-8 ${isDragActive ? "text-primary" : "text-gray-400"}`}
           />
         </div>

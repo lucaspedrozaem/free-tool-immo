@@ -289,7 +289,7 @@ export default function OpenHouseFlyerGeneratorPage() {
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
               >
-                <Icon icon="lucide:plus" className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                <Icon icon="ph:plus-circle" className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-600">
                   Click or drag & drop photos
                 </p>

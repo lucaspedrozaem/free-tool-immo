@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react";
 const toolCategories = [
   {
     label: "Convert",
-    icon: "lucide:image",
+    icon: "ph:image-square",
     tools: [
       { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
       { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
@@ -16,7 +16,7 @@ const toolCategories = [
   },
   {
     label: "Resize & Crop",
-    icon: "lucide:maximize",
+    icon: "ph:resize",
     tools: [
       { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
       { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
@@ -27,7 +27,7 @@ const toolCategories = [
   },
   {
     label: "Privacy",
-    icon: "lucide:lock",
+    icon: "ph:shield-check",
     tools: [
       { name: "Remove EXIF Data", href: "/remove-exif-data" },
       { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
@@ -36,7 +36,7 @@ const toolCategories = [
   },
   {
     label: "Brand & Market",
-    icon: "lucide:megaphone",
+    icon: "ph:megaphone-simple",
     tools: [
       { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
       { name: "Agent Branding Bar", href: "/agent-branding-bar" },
@@ -86,7 +86,7 @@ export function Navbar() {
                   <Icon icon={category.icon} className="w-4 h-4 text-primary" />
                   {category.label}
                   <Icon
-                    icon="lucide:chevron-down"
+                    icon="ph:caret-down"
                     className={`w-3 h-3 text-gray-400 transition-transform ${openCategory === category.label ? "rotate-180" : ""}`}
                   />
                 </button>
@@ -130,7 +130,7 @@ export function Navbar() {
             }}
           >
             <Icon
-              icon={mobileOpen ? "lucide:x" : "lucide:menu"}
+              icon={mobileOpen ? "ph:x" : "ph:list"}
               className="w-6 h-6"
             />
           </button>
@@ -155,7 +155,7 @@ export function Navbar() {
                       {category.label}
                     </span>
                     <Icon
-                      icon="lucide:chevron-down"
+                      icon="ph:caret-down"
                       className={`w-4 h-4 text-gray-400 transition-transform ${
                         mobileSection === category.label ? "rotate-180" : ""
                       }`}

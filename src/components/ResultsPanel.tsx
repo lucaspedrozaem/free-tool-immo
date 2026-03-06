@@ -28,7 +28,7 @@ export function ResultsPanel({
       {/* Success header */}
       <div className="text-center mb-8">
         <div className="w-16 h-16 mx-auto mb-4 bg-success/10 rounded-full flex items-center justify-center">
-          <Icon icon="lucide:check" className="w-8 h-8 text-success" />
+          <Icon icon="ph:check-circle" className="w-8 h-8 text-success" />
         </div>
         <h2 className="text-2xl font-heading font-bold text-slate-dark">
           All Done!
@@ -74,7 +74,7 @@ export function ResultsPanel({
           onClick={() => downloadAsZip(images, zipName)}
           className="flex-1 bg-success hover:bg-success-dark text-white font-semibold py-3 px-6 rounded-md transition-colors flex items-center justify-center gap-2"
         >
-          <Icon icon="lucide:download" className="w-5 h-5" />
+          <Icon icon="ph:download-simple" className="w-5 h-5" />
           Download All as ZIP
         </button>
         <button

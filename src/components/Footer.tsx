@@ -86,7 +86,7 @@ export function Footer() {
               for real estate professionals.
             </p>
             <div className="mt-4 flex items-center gap-2 text-sm text-success">
-              <Icon icon="lucide:lock" className="w-4 h-4" />
+              <Icon icon="ph:lock-key" className="w-4 h-4" />
               Your photos never leave your browser
             </div>
           </div>
