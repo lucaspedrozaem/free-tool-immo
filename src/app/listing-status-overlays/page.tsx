@@ -72,13 +72,24 @@ async function applyStatusOverlay(
   const h = bitmap.height;
 
   if (config.style === "corner") {
-    // Angled corner ribbon
-    ctx.save();
-    ctx.translate(0, 0);
-    ctx.rotate(0);
-
-    const ribbonW = Math.min(w * 0.55, 600);
+    // Corner ribbon
     const ribbonH = Math.max(50, Math.round(h * 0.06));
+    const padding = ribbonH * 0.6;
+
+    // Size font to fit: start from height-based size, shrink if text overflows max width
+    const maxRibbonW = Math.min(w * 0.55, 600);
+    let fontSize = Math.max(20, Math.round(ribbonH * 0.55));
+    ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+    let textW = ctx.measureText(config.text).width;
+
+    // Shrink font if text + padding exceeds max ribbon width
+    while (textW + padding * 2 > maxRibbonW && fontSize > 16) {
+      fontSize -= 2;
+      ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+      textW = ctx.measureText(config.text).width;
+    }
+
+    const ribbonW = Math.max(textW + padding * 2, Math.min(maxRibbonW, textW + padding * 2));
 
     ctx.save();
     ctx.translate(w * 0.02, h * 0.02);
@@ -107,7 +118,6 @@ async function applyStatusOverlay(
     ctx.shadowColor = "transparent";
 
     // Text
-    const fontSize = Math.max(20, Math.round(ribbonH * 0.55));
     ctx.font = `bold ${fontSize}px Inter, sans-serif`;
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
