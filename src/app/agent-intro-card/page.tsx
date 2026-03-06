@@ -191,8 +191,8 @@ export default function AgentIntroCardPage() {
     // Brokerage section (bottom left)
     if (logoFile) {
       const logoBm = await createImageBitmap(logoFile);
-      const logoMaxH = 120;
-      const logoMaxW = 400;
+      const logoMaxH = 70;
+      const logoMaxW = 280;
       const scale = Math.min(logoMaxW / logoBm.width, logoMaxH / logoBm.height);
       const lw = Math.round(logoBm.width * scale);
       const lh = Math.round(logoBm.height * scale);

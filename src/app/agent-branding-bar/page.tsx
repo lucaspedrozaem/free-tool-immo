@@ -24,9 +24,9 @@ const faqItems = [
       "You can add your name, phone number, email, brokerage name, website URL, a profile photo (headshot), and a QR code. All fields except agent name are optional.",
   },
   {
-    question: "Can I add my headshot or logo?",
+    question: "Can I add my headshot, logo, or QR code?",
     answer:
-      "Yes! You can upload a profile photo that appears as a circle on the left side of the branding bar. You can also upload a QR code image that appears on the right side, perfect for linking to your website or listing page.",
+      "Yes! You can upload a profile photo (circular headshot on the left), a brokerage logo (displayed next to your name), and a QR code (on the right side, perfect for linking to your website or listing page). All three are optional.",
   },
   {
     question: "Will this affect MLS compliance?",
@@ -72,6 +72,7 @@ async function applyBrandingBar(
     style: BarStyle;
     brandColor: string;
     profileBitmap: ImageBitmap | null;
+    logoBitmap: ImageBitmap | null;
     qrBitmap: ImageBitmap | null;
   }
 ): Promise<ProcessedImage> {
@@ -143,6 +144,24 @@ async function applyBrandingBar(
     ctx.fillText(config.brokerage, textStartX, barY + barHeight * 0.7);
   }
 
+  // Brokerage logo (after text block)
+  if (config.logoBitmap) {
+    const logoMaxH = Math.round(barHeight * 0.55);
+    const logoMaxW = Math.round(barHeight * 2);
+    const logoScale = Math.min(logoMaxW / config.logoBitmap.width, logoMaxH / config.logoBitmap.height);
+    const logoW = Math.round(config.logoBitmap.width * logoScale);
+    const logoH = Math.round(config.logoBitmap.height * logoScale);
+    // Measure text width to position logo after text
+    ctx.font = `bold ${fontSize}px 'DM Sans', Inter, sans-serif`;
+    const nameWidth = ctx.measureText(config.agentName).width;
+    ctx.font = `${smallFontSize}px 'DM Sans', Inter, sans-serif`;
+    const brokerageWidth = config.brokerage ? ctx.measureText(config.brokerage).width : 0;
+    const textBlockEnd = textStartX + Math.max(nameWidth, brokerageWidth) + padding * 2;
+    const logoX = textBlockEnd;
+    const logoY = barY + Math.round((barHeight - logoH) / 2);
+    ctx.drawImage(config.logoBitmap, logoX, logoY, logoW, logoH);
+  }
+
   // Phone & website (right side, before QR)
   ctx.textBaseline = "middle";
   const rightInfo = [config.phone, config.website].filter(Boolean);
@@ -193,6 +212,11 @@ export default function AgentBrandingBarPage() {
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
 
+  // Brokerage logo
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
   // QR code
   const [qrFile, setQrFile] = useState<File | null>(null);
   const [qrPreview, setQrPreview] = useState<string | null>(null);
@@ -228,14 +252,32 @@ export default function AgentBrandingBarPage() {
     setQrPreview(URL.createObjectURL(file));
   };
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoFile(file);
+    const url = URL.createObjectURL(file);
+    setLogoPreview(url);
+
+    // Auto-extract brand color from logo
+    const color = await extractDominantColor(url);
+    if (color) {
+      setBrandColor(color);
+      setColorAutoDetected(true);
+      if (barStyle !== "brand") setBarStyle("brand");
+    }
+  };
+
   const handleProcess = async () => {
     if (!agentName.trim()) return;
     setState("processing");
 
-    // Pre-load profile and QR bitmaps once
+    // Pre-load profile, logo, and QR bitmaps once
     let profileBitmap: ImageBitmap | null = null;
+    let logoBitmap: ImageBitmap | null = null;
     let qrBitmap: ImageBitmap | null = null;
     if (profileFile) profileBitmap = await createImageBitmap(profileFile);
+    if (logoFile) logoBitmap = await createImageBitmap(logoFile);
     if (qrFile) qrBitmap = await createImageBitmap(qrFile);
 
     const processed: ProcessedImage[] = [];
@@ -245,12 +287,13 @@ export default function AgentBrandingBarPage() {
       });
       const result = await applyBrandingBar(files[i], {
         agentName, phone, brokerage, website, position, style: barStyle, brandColor,
-        profileBitmap, qrBitmap,
+        profileBitmap, logoBitmap, qrBitmap,
       });
       processed.push(result);
     }
 
     if (profileBitmap) profileBitmap.close();
+    if (logoBitmap) logoBitmap.close();
     if (qrBitmap) qrBitmap.close();
 
     setResults(processed);
@@ -350,8 +393,8 @@ export default function AgentBrandingBarPage() {
                     />
                   </div>
 
-                  {/* Profile Photo & QR Code */}
-                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                  {/* Profile Photo, Brokerage Logo & QR Code */}
+                  <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-100">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1.5">Profile Photo</label>
                       <input
@@ -384,7 +427,43 @@ export default function AgentBrandingBarPage() {
                           onClick={() => profileInputRef.current?.click()}
                           className="w-full border-2 border-dashed border-gray-200 rounded-lg py-3 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors"
                         >
-                          + Upload headshot
+                          + Headshot
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1.5">Brokerage Logo</label>
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
+                      {logoPreview ? (
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={logoPreview}
+                            alt="Logo"
+                            className="w-12 h-12 rounded object-contain border border-gray-200 bg-white p-0.5"
+                          />
+                          <button
+                            onClick={() => {
+                              setLogoFile(null);
+                              setLogoPreview(null);
+                              setColorAutoDetected(false);
+                            }}
+                            className="text-xs text-gray-400 hover:text-red-500"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => logoInputRef.current?.click()}
+                          className="w-full border-2 border-dashed border-gray-200 rounded-lg py-3 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors"
+                        >
+                          + Logo
                         </button>
                       )}
                     </div>
@@ -419,7 +498,7 @@ export default function AgentBrandingBarPage() {
                           onClick={() => qrInputRef.current?.click()}
                           className="w-full border-2 border-dashed border-gray-200 rounded-lg py-3 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors"
                         >
-                          + Upload QR code
+                          + QR code
                         </button>
                       )}
                     </div>
@@ -514,6 +593,9 @@ export default function AgentBrandingBarPage() {
                                 {brokerage || "Your Brokerage"}
                               </p>
                             </div>
+                            {logoPreview && (
+                              <img src={logoPreview} alt="" className="h-7 max-w-[60px] object-contain ml-1" />
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="text-right">
@@ -555,6 +637,9 @@ export default function AgentBrandingBarPage() {
                                 {brokerage || "Your Brokerage"}
                               </p>
                             </div>
+                            {logoPreview && (
+                              <img src={logoPreview} alt="" className="h-7 max-w-[60px] object-contain ml-1" />
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="text-right">
