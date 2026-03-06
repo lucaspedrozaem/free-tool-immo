@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useId } from "react";
 import { useDropzone } from "react-dropzone";
 
 interface PhotoDropzoneProps {
@@ -24,6 +24,7 @@ export function PhotoDropzone({
     },
     [onFiles, maxFiles]
   );
+  const dropzoneId = useId();
 
   const defaultAccept = accept ?? {
     "image/*": [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"],
@@ -35,17 +36,36 @@ export function PhotoDropzone({
     maxFiles,
   });
 
+  const instructions = compact
+    ? description || `or click to browse (up to ${maxFiles} files)`
+    : description || "Supports JPG, PNG, WebP, and iPhone HEIC files";
+
+  const keyboardInstructions =
+    "Press Enter or Space to open the file picker, or drag and drop files.";
+
+  const rootProps = getRootProps({
+    role: "button",
+    "aria-label": `Photo upload dropzone. ${instructions}`,
+    "aria-describedby": `${dropzoneId}-instructions ${dropzoneId}-keyboard`,
+  });
+
   if (compact) {
     return (
       <div
-        {...getRootProps()}
+        {...rootProps}
         className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200 ${
           isDragActive
             ? "border-primary bg-primary/5 scale-[1.01]"
             : "border-border hover:border-primary/50 bg-white"
         }`}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} aria-label="Upload listing photos" />
+        <p id={`${dropzoneId}-instructions`} className="sr-only">
+          {instructions}
+        </p>
+        <p id={`${dropzoneId}-keyboard`} className="sr-only">
+          {keyboardInstructions}
+        </p>
         <div className="flex flex-col items-center gap-3">
           <svg
             className={`w-10 h-10 ${isDragActive ? "text-primary" : "text-border"}`}
@@ -62,13 +82,9 @@ export function PhotoDropzone({
           </svg>
           <div>
             <p className="font-semibold text-slate-dark">
-              {isDragActive
-                ? "Drop photos here"
-                : "Drag & drop photos here"}
+              {isDragActive ? "Drop photos here" : "Drag & drop photos here"}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
-              {description || `or click to browse (up to ${maxFiles} files)`}
-            </p>
+            <p className="text-sm text-gray-500 mt-1">{instructions}</p>
           </div>
         </div>
       </div>
@@ -77,14 +93,20 @@ export function PhotoDropzone({
 
   return (
     <div
-      {...getRootProps()}
+      {...rootProps}
       className={`border-2 border-dashed rounded-2xl p-6 sm:p-12 md:p-16 text-center cursor-pointer transition-all duration-300 ${
         isDragActive
           ? "border-primary bg-primary/5 scale-[1.02] shadow-xl shadow-primary/10"
           : "border-border hover:border-primary/50 bg-white shadow-lg hover:shadow-xl"
       }`}
     >
-      <input {...getInputProps()} />
+      <input {...getInputProps()} aria-label="Upload listing photos" />
+      <p id={`${dropzoneId}-instructions`} className="sr-only">
+        {instructions}
+      </p>
+      <p id={`${dropzoneId}-keyboard`} className="sr-only">
+        {keyboardInstructions}
+      </p>
       <div className="flex flex-col items-center gap-4">
         <div
           className={`w-16 h-16 rounded-full flex items-center justify-center ${isDragActive ? "bg-primary/10" : "bg-gray-100"}`}
@@ -110,14 +132,9 @@ export function PhotoDropzone({
               : "Drag & Drop up to 50 photos here"}
           </p>
           <p className="text-gray-500 mt-2">
-            or{" "}
-            <span className="text-primary font-medium underline">
-              click to browse
-            </span>
+            or <span className="text-primary font-medium underline">click to browse</span>
           </p>
-          <p className="text-sm text-gray-400 mt-3">
-            {description || "Supports JPG, PNG, WebP, and iPhone HEIC files"}
-          </p>
+          <p className="text-sm text-gray-400 mt-3">{instructions}</p>
         </div>
       </div>
     </div>
