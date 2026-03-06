@@ -1,20 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Image from "next/image";
 import Link from "next/link";
-import type {
-  ProcessingOptions,
-  ProcessedImage,
-  ProcessingProgress,
-} from "@/lib/image-processing";
-import { processImages } from "@/lib/image-processing";
-
-type AppState = "upload" | "configure" | "processing" | "done";
+import type { ProcessingOptions } from "@/lib/image-processing";
+import { useImageProcessingFlow } from "@/hooks/useImageProcessingFlow";
 
 interface ToolPageLayoutProps {
   title: string;
@@ -52,37 +45,19 @@ export function ToolPageLayout({
   acceptFormats,
   illustration,
 }: ToolPageLayoutProps) {
-  const [state, setState] = useState<AppState>("upload");
-  const [files, setFiles] = useState<File[]>([]);
-  const [progress, setProgress] = useState<ProcessingProgress>({
-    current: 0,
-    total: 0,
-    currentFile: "",
-    stage: "Processing",
-  });
-  const [results, setResults] = useState<ProcessedImage[]>([]);
-
-  const handleFiles = (newFiles: File[]) => {
-    setFiles(newFiles);
-    setState("configure");
-  };
+  const {
+    state,
+    files,
+    progress,
+    results,
+    errorMessage,
+    handleFiles,
+    runWithOptions,
+    reset,
+  } = useImageProcessingFlow();
 
   const handleProcess = async (options: ProcessingOptions) => {
-    setState("processing");
-    try {
-      const processed = await processImages(files, options, setProgress);
-      setResults(processed);
-      setState("done");
-    } catch (err) {
-      console.error("Processing error:", err);
-      setState("configure");
-    }
-  };
-
-  const handleReset = () => {
-    setFiles([]);
-    setResults([]);
-    setState("upload");
+    await runWithOptions(options);
   };
 
   return (
@@ -121,12 +96,17 @@ export function ToolPageLayout({
 
           {state === "configure" && (
             <div>
+              {errorMessage && (
+                <p className="mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-2 text-sm">
+                  {errorMessage}
+                </p>
+              )}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-heading font-bold text-2xl">
                   {files.length} Photo{files.length !== 1 ? "s" : ""} Ready
                 </h2>
                 <button
-                  onClick={handleReset}
+                  onClick={reset}
                   className="text-sm text-gray-500 hover:text-primary"
                 >
                   Start Over
@@ -138,7 +118,7 @@ export function ToolPageLayout({
 
           {state === "processing" && <ProgressBar progress={progress} />}
           {state === "done" && (
-            <ResultsPanel images={results} onReset={handleReset} />
+            <ResultsPanel images={results} onReset={reset} />
           )}
         </div>
       </section>
