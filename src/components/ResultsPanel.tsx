@@ -12,12 +12,14 @@ interface ResultsPanelProps {
   images: ProcessedImage[];
   onReset: () => void;
   zipName?: string;
+  wasCancelled?: boolean;
 }
 
 export function ResultsPanel({
   images,
   onReset,
   zipName = "listing-photos",
+  wasCancelled = false,
 }: ResultsPanelProps) {
   const totalOriginal = images.reduce((sum, img) => sum + img.originalSize, 0);
   const totalNew = images.reduce((sum, img) => sum + img.newSize, 0);
@@ -31,11 +33,11 @@ export function ResultsPanel({
           <Icon icon="ph:check-circle" className="w-8 h-8 text-success" />
         </div>
         <h2 className="text-2xl font-heading font-bold text-slate-dark">
-          All Done!
+          {wasCancelled ? "Processing cancelled" : "All Done!"}
         </h2>
         <p className="text-gray-500 mt-1">
           {images.length} photo{images.length !== 1 ? "s" : ""} processed
-          successfully
+          {wasCancelled ? " before cancellation" : " successfully"}
         </p>
         {savedPercent > 0 && (
           <p className="text-sm text-success-dark mt-1">
