@@ -71,6 +71,7 @@ export function ResultsPanel({
             </div>
             <button
               onClick={() => downloadSingleImage(img)}
+              aria-label={`Download optimized image ${img.newName}`}
               className="text-primary hover:text-primary-dark ml-3 text-xs font-medium py-1 px-2"
             >
               Download
@@ -83,6 +84,7 @@ export function ResultsPanel({
       <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={() => downloadAsZip(images, zipName)}
+          aria-label={`Download all ${images.length} processed images as ZIP`}
           className="flex-1 bg-success hover:bg-success-dark text-white font-semibold py-3 px-6 rounded-md transition-colors flex items-center justify-center gap-2"
         >
           <svg
@@ -102,6 +104,7 @@ export function ResultsPanel({
         </button>
         <button
           onClick={onReset}
+          aria-label="Start over and process another listing"
           className="flex-1 bg-white border border-border text-slate-dark font-semibold py-3 px-6 rounded-md hover:bg-ash transition-colors"
         >
           Process Another Listing
