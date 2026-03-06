@@ -34,6 +34,43 @@ const faqItems = [
   },
 ];
 
+function extractDominantColor(imgSrc: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = document.createElement("img");
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(null); return; }
+      canvas.width = 50;
+      canvas.height = 50;
+      ctx.drawImage(img, 0, 0, 50, 50);
+      const { data } = ctx.getImageData(0, 0, 50, 50);
+
+      const counts: Record<string, number> = {};
+      for (let i = 0; i < data.length; i += 4) {
+        const [r, g, b, a] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+        if (a < 128) continue;
+        if (r > 230 && g > 230 && b > 230) continue;
+        if (r < 25 && g < 25 && b < 25) continue;
+        const key = `${r & 0xf0},${g & 0xf0},${b & 0xf0}`;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      if (top) {
+        const [r, g, b] = top[0].split(",").map(Number);
+        const hex = `#${[r, g, b].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+        resolve(hex);
+      } else {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = imgSrc;
+  });
+}
+
 export default function AgentIntroCardPage() {
   const [agentName, setAgentName] = useState("");
   const [tagline, setTagline] = useState("FOR MORE INFORMATION CONTACT");
@@ -58,6 +95,7 @@ export default function AgentIntroCardPage() {
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [resultBlob, setResultBlob] = useState<Blob | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [accentAutoDetected, setAccentAutoDetected] = useState(false);
 
   const handleHeadshotUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -67,12 +105,20 @@ export default function AgentIntroCardPage() {
     setResultUrl(null);
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setLogoFile(file);
-    setLogoPreview(URL.createObjectURL(file));
+    const url = URL.createObjectURL(file);
+    setLogoPreview(url);
     setResultUrl(null);
+
+    // Auto-extract brand color from brokerage logo
+    const color = await extractDominantColor(url);
+    if (color) {
+      setAccentColor(color);
+      setAccentAutoDetected(true);
+    }
   };
 
   const getBgColor = () => {
@@ -340,7 +386,7 @@ export default function AgentIntroCardPage() {
                     {logoPreview ? (
                       <div className="flex items-center gap-2">
                         <img src={logoPreview} alt="Logo" className="w-14 h-14 rounded-lg object-contain border border-gray-200 bg-white p-1" />
-                        <button onClick={() => { setLogoFile(null); setLogoPreview(null); setResultUrl(null); }} className="text-xs text-gray-400 hover:text-red-500">Remove</button>
+                        <button onClick={() => { setLogoFile(null); setLogoPreview(null); setAccentAutoDetected(false); setResultUrl(null); }} className="text-xs text-gray-400 hover:text-red-500">Remove</button>
                       </div>
                     ) : (
                       <button onClick={() => logoRef.current?.click()} className="w-full border-2 border-dashed border-gray-200 rounded-lg py-3 text-xs text-gray-400 hover:border-primary/40 hover:text-primary transition-colors">
@@ -385,12 +431,12 @@ export default function AgentIntroCardPage() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Accent Color (phone, decorations)</label>
                   <div className="flex items-center gap-3">
-                    <input type="color" value={accentColor} onChange={(e) => { setAccentColor(e.target.value); setResultUrl(null); }} className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
+                    <input type="color" value={accentColor} onChange={(e) => { setAccentColor(e.target.value); setAccentAutoDetected(false); setResultUrl(null); }} className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
                     <div className="flex gap-1.5">
                       {["#E91E8C", "#FFD700", "#0165bf", "#10B981", "#DC2626", "#FFFFFF"].map((c) => (
                         <button
                           key={c}
-                          onClick={() => { setAccentColor(c); setResultUrl(null); }}
+                          onClick={() => { setAccentColor(c); setAccentAutoDetected(false); setResultUrl(null); }}
                           className={`w-7 h-7 rounded-full border-2 transition-all ${
                             accentColor === c ? "border-gray-800 scale-110" : "border-gray-200"
                           }`}
@@ -399,6 +445,9 @@ export default function AgentIntroCardPage() {
                       ))}
                     </div>
                   </div>
+                  {accentAutoDetected && (
+                    <p className="text-xs text-primary font-medium mt-1">Auto-detected from logo</p>
+                  )}
                 </div>
 
                 {/* Live Preview */}
