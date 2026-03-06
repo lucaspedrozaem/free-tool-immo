@@ -68,7 +68,7 @@ export function Navbar() {
               height={38}
               className="rounded-lg"
             />
-            <span className="font-heading font-bold text-xl text-midnight leading-none -mb-0.5">
+            <span className="font-heading font-bold text-xl text-midnight leading-none -mt-1">
               MLS<span className="bg-gradient-to-r from-primary to-primary-end bg-clip-text text-transparent">Photo</span>Tools
             </span>
           </Link>
