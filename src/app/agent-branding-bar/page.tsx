@@ -44,6 +44,43 @@ const faqItems = [
   },
 ];
 
+function extractDominantColor(imgSrc: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = document.createElement("img");
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(null); return; }
+      canvas.width = 50;
+      canvas.height = 50;
+      ctx.drawImage(img, 0, 0, 50, 50);
+      const { data } = ctx.getImageData(0, 0, 50, 50);
+
+      const counts: Record<string, number> = {};
+      for (let i = 0; i < data.length; i += 4) {
+        const [r, g, b, a] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+        if (a < 128) continue;
+        if (r > 230 && g > 230 && b > 230) continue;
+        if (r < 25 && g < 25 && b < 25) continue;
+        const key = `${r & 0xf0},${g & 0xf0},${b & 0xf0}`;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      if (top) {
+        const [r, g, b] = top[0].split(",").map(Number);
+        const hex = `#${[r, g, b].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+        resolve(hex);
+      } else {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = imgSrc;
+  });
+}
+
 function drawCircleImage(
   ctx: OffscreenCanvasRenderingContext2D,
   img: ImageBitmap,
@@ -202,11 +239,22 @@ export default function AgentBrandingBarPage() {
     setState("configure");
   }, []);
 
-  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [colorAutoDetected, setColorAutoDetected] = useState(false);
+
+  const handleProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setProfileFile(file);
-    setProfilePreview(URL.createObjectURL(file));
+    const url = URL.createObjectURL(file);
+    setProfilePreview(url);
+
+    // Auto-extract brand color from the uploaded photo
+    const color = await extractDominantColor(url);
+    if (color) {
+      setBrandColor(color);
+      setColorAutoDetected(true);
+      if (barStyle !== "brand") setBarStyle("brand");
+    }
   };
 
   const handleQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -360,6 +408,7 @@ export default function AgentBrandingBarPage() {
                             onClick={() => {
                               setProfileFile(null);
                               setProfilePreview(null);
+                              setColorAutoDetected(false);
                             }}
                             className="text-xs text-gray-400 hover:text-red-500"
                           >
@@ -464,9 +513,14 @@ export default function AgentBrandingBarPage() {
                       <input
                         type="color"
                         value={brandColor}
-                        onChange={(e) => setBrandColor(e.target.value)}
+                        onChange={(e) => { setBrandColor(e.target.value); setColorAutoDetected(false); }}
                         className="w-10 h-10 rounded cursor-pointer border border-gray-300"
                       />
+                      {colorAutoDetected && (
+                        <span className="text-xs text-primary font-medium">
+                          Auto-detected from photo
+                        </span>
+                      )}
                     </div>
                   )}
 
