@@ -1,3 +1,10 @@
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+} from "@/lib/canvas-runtime";
+
 export interface ProcessingOptions {
   resize?: { width: number; height: number; maintainAspect?: boolean };
   compress?: { maxSizeMB: number; quality: number };
@@ -98,22 +105,23 @@ export async function processImage(
     }
   }
 
-  const bitmap = await createImageBitmap(
-    imageSource instanceof Blob ? imageSource : file
+  const decodedImage = await decodeImageWithFallback(
+    imageSource instanceof Blob ? imageSource : file,
+    file.name
   );
 
-  let targetWidth = bitmap.width;
-  let targetHeight = bitmap.height;
+  let targetWidth = decodedImage.width;
+  let targetHeight = decodedImage.height;
 
   if (options.resize) {
     if (options.resize.maintainAspect !== false) {
       const ratio = Math.min(
-        options.resize.width / bitmap.width,
-        options.resize.height / bitmap.height
+        options.resize.width / decodedImage.width,
+        options.resize.height / decodedImage.height
       );
       if (ratio < 1) {
-        targetWidth = Math.round(bitmap.width * ratio);
-        targetHeight = Math.round(bitmap.height * ratio);
+        targetWidth = Math.round(decodedImage.width * ratio);
+        targetHeight = Math.round(decodedImage.height * ratio);
       }
     } else {
       targetWidth = options.resize.width;
@@ -121,10 +129,10 @@ export async function processImage(
     }
   }
 
-  const canvas = new OffscreenCanvas(targetWidth, targetHeight);
-  const ctx = canvas.getContext("2d")!;
-  ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
-  bitmap.close();
+  const canvas = createRuntimeCanvas(targetWidth, targetHeight);
+  const ctx = getRuntime2DContext(canvas, file.name);
+  ctx.drawImage(decodedImage.source, 0, 0, targetWidth, targetHeight);
+  decodedImage.close();
 
   // Watermark
   if (options.watermark?.text) {
@@ -170,7 +178,7 @@ export async function processImage(
   const mimeType = `image/${format}`;
   let quality = options.compress?.quality ?? 0.92;
 
-  let blob = await canvas.convertToBlob({ type: mimeType, quality });
+  let blob = await runtimeCanvasToBlob(canvas, { type: mimeType, quality });
 
   // If max size specified, progressively reduce quality
   if (options.compress?.maxSizeMB) {
@@ -178,7 +186,7 @@ export async function processImage(
     let attempts = 0;
     while (blob.size > maxBytes && quality > 0.1 && attempts < 10) {
       quality -= 0.08;
-      blob = await canvas.convertToBlob({ type: mimeType, quality });
+      blob = await runtimeCanvasToBlob(canvas, { type: mimeType, quality });
       attempts++;
     }
   }

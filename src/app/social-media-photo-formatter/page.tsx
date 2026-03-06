@@ -7,6 +7,12 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+} from "@/lib/canvas-runtime";
 import type {
   ProcessedImage,
   ProcessingProgress,
@@ -56,28 +62,28 @@ async function formatForSocial(
   fillMode: FillMode,
   brandColor: string
 ): Promise<ProcessedImage> {
-  const bitmap = await createImageBitmap(file);
-  const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
-  const ctx = canvas.getContext("2d")!;
+  const decoded = await decodeImageWithFallback(file, file.name);
+  const canvas = createRuntimeCanvas(canvasWidth, canvasHeight);
+  const ctx = getRuntime2DContext(canvas, file.name);
 
   if (fillMode === "crop") {
     // Center-crop to fill the entire canvas (no background)
-    const coverScale = Math.max(canvasWidth / bitmap.width, canvasHeight / bitmap.height);
+    const coverScale = Math.max(canvasWidth / decoded.width, canvasHeight / decoded.height);
     const srcW = Math.round(canvasWidth / coverScale);
     const srcH = Math.round(canvasHeight / coverScale);
-    const srcX = Math.round((bitmap.width - srcW) / 2);
-    const srcY = Math.round((bitmap.height - srcH) / 2);
-    ctx.drawImage(bitmap, srcX, srcY, srcW, srcH, 0, 0, canvasWidth, canvasHeight);
+    const srcX = Math.round((decoded.width - srcW) / 2);
+    const srcY = Math.round((decoded.height - srcH) / 2);
+    ctx.drawImage(decoded.source, srcX, srcY, srcW, srcH, 0, 0, canvasWidth, canvasHeight);
   } else {
     // Fill background
     if (fillMode === "blur") {
-      const bgScale = Math.max(canvasWidth / bitmap.width, canvasHeight / bitmap.height);
-      const bgW = Math.round(bitmap.width * bgScale);
-      const bgH = Math.round(bitmap.height * bgScale);
+      const bgScale = Math.max(canvasWidth / decoded.width, canvasHeight / decoded.height);
+      const bgW = Math.round(decoded.width * bgScale);
+      const bgH = Math.round(decoded.height * bgScale);
       const bgX = Math.round((canvasWidth - bgW) / 2);
       const bgY = Math.round((canvasHeight - bgH) / 2);
       ctx.filter = "blur(30px) brightness(0.7)";
-      ctx.drawImage(bitmap, bgX - 20, bgY - 20, bgW + 40, bgH + 40);
+      ctx.drawImage(decoded.source, bgX - 20, bgY - 20, bgW + 40, bgH + 40);
       ctx.filter = "none";
     } else if (fillMode === "brand") {
       ctx.fillStyle = brandColor;
@@ -88,16 +94,16 @@ async function formatForSocial(
     }
 
     // Draw original photo centered (fit inside canvas)
-    const scale = Math.min(canvasWidth / bitmap.width, canvasHeight / bitmap.height) * 0.9;
-    const drawW = Math.round(bitmap.width * scale);
-    const drawH = Math.round(bitmap.height * scale);
+    const scale = Math.min(canvasWidth / decoded.width, canvasHeight / decoded.height) * 0.9;
+    const drawW = Math.round(decoded.width * scale);
+    const drawH = Math.round(decoded.height * scale);
     const drawX = Math.round((canvasWidth - drawW) / 2);
     const drawY = Math.round((canvasHeight - drawH) / 2);
-    ctx.drawImage(bitmap, drawX, drawY, drawW, drawH);
+    ctx.drawImage(decoded.source, drawX, drawY, drawW, drawH);
   }
-  bitmap.close();
+  decoded.close();
 
-  const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+  const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.92 });
   const baseName = file.name.replace(/\.[^.]+$/, "");
 
   return {

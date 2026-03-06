@@ -4,6 +4,12 @@ import { useState, useRef, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+} from "@/lib/canvas-runtime";
 type GridLayout = "2x2" | "2x1" | "1x2" | "3x1" | "1x3";
 
 const GRID_CONFIGS: Record<GridLayout, { cols: number; rows: number; count: number }> = {
@@ -112,8 +118,8 @@ export default function PhotoGridMakerPage() {
   const handleGenerate = async () => {
     if (!allFilled) return;
 
-    const bitmaps = await Promise.all(
-      usedImages.map((entry) => createImageBitmap(entry.file))
+    const decodedImages = await Promise.all(
+      usedImages.map((entry) => decodeImageWithFallback(entry.file, entry.file.name))
     );
 
     const cellW = 800;
@@ -121,37 +127,37 @@ export default function PhotoGridMakerPage() {
     const totalW = config.cols * cellW + (config.cols - 1) * gap;
     const totalH = config.rows * cellH + (config.rows - 1) * gap;
 
-    const canvas = new OffscreenCanvas(totalW, totalH);
-    const ctx = canvas.getContext("2d")!;
+    const canvas = createRuntimeCanvas(totalW, totalH);
+    const ctx = getRuntime2DContext(canvas);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, totalW, totalH);
 
     let idx = 0;
     for (let r = 0; r < config.rows; r++) {
       for (let c = 0; c < config.cols; c++) {
-        if (idx >= bitmaps.length) break;
-        const bm = bitmaps[idx];
+        if (idx >= decodedImages.length) break;
+        const decoded = decodedImages[idx];
         const x = c * (cellW + gap);
         const y = r * (cellH + gap);
 
-        const srcRatio = bm.width / bm.height;
+        const srcRatio = decoded.width / decoded.height;
         const cellRatio = cellW / cellH;
-        let sx = 0, sy = 0, sw = bm.width, sh = bm.height;
+        let sx = 0, sy = 0, sw = decoded.width, sh = decoded.height;
         if (srcRatio > cellRatio) {
-          sw = Math.round(bm.height * cellRatio);
-          sx = Math.round((bm.width - sw) / 2);
+          sw = Math.round(decoded.height * cellRatio);
+          sx = Math.round((decoded.width - sw) / 2);
         } else {
-          sh = Math.round(bm.width / cellRatio);
-          sy = Math.round((bm.height - sh) / 2);
+          sh = Math.round(decoded.width / cellRatio);
+          sy = Math.round((decoded.height - sh) / 2);
         }
 
-        ctx.drawImage(bm, sx, sy, sw, sh, x, y, cellW, cellH);
-        bm.close();
+        ctx.drawImage(decoded.source, sx, sy, sw, sh, x, y, cellW, cellH);
+        decoded.close();
         idx++;
       }
     }
 
-    const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+    const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.92 });
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     setResultBlob(blob);
     setResultUrl(URL.createObjectURL(blob));

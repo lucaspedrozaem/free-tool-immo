@@ -7,6 +7,14 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+  type DecodedCanvasImage,
+  type RuntimeCanvas2DContext,
+} from "@/lib/canvas-runtime";
 import type {
   ProcessedImage,
   ProcessingProgress,
@@ -45,8 +53,8 @@ const faqItems = [
 ];
 
 function drawCircleImage(
-  ctx: OffscreenCanvasRenderingContext2D,
-  img: ImageBitmap,
+  ctx: RuntimeCanvas2DContext,
+  img: CanvasImageSource,
   x: number,
   y: number,
   size: number
@@ -70,23 +78,23 @@ async function applyBrandingBar(
     position: BarPosition;
     style: BarStyle;
     brandColor: string;
-    profileBitmap: ImageBitmap | null;
-    qrBitmap: ImageBitmap | null;
+    profileBitmap: DecodedCanvasImage | null;
+    qrBitmap: DecodedCanvasImage | null;
   }
 ): Promise<ProcessedImage> {
-  const bitmap = await createImageBitmap(file);
-  const barHeight = Math.max(60, Math.round(bitmap.height * 0.08));
-  const totalH = bitmap.height + barHeight;
+  const decoded = await decodeImageWithFallback(file, file.name);
+  const barHeight = Math.max(60, Math.round(decoded.height * 0.08));
+  const totalH = decoded.height + barHeight;
 
-  const canvas = new OffscreenCanvas(bitmap.width, totalH);
-  const ctx = canvas.getContext("2d")!;
+  const canvas = createRuntimeCanvas(decoded.width, totalH);
+  const ctx = getRuntime2DContext(canvas, file.name);
 
   // Draw photo
   const photoY = config.position === "top" ? barHeight : 0;
-  ctx.drawImage(bitmap, 0, photoY);
+  ctx.drawImage(decoded.source, 0, photoY);
 
   // Draw bar background
-  const barY = config.position === "top" ? 0 : bitmap.height;
+  const barY = config.position === "top" ? 0 : decoded.height;
   if (config.style === "dark") {
     ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
   } else if (config.style === "light") {
@@ -94,14 +102,14 @@ async function applyBrandingBar(
   } else {
     ctx.fillStyle = config.brandColor;
   }
-  ctx.fillRect(0, barY, bitmap.width, barHeight);
+  ctx.fillRect(0, barY, decoded.width, barHeight);
 
   // Text styling
   const textColor = config.style === "light" ? "#1E293B" : "#FFFFFF";
   const subTextColor = config.style === "light" ? "#64748B" : "rgba(255,255,255,0.8)";
   const fontSize = Math.max(14, Math.round(barHeight * 0.32));
   const smallFontSize = Math.max(11, Math.round(barHeight * 0.22));
-  const padding = Math.round(bitmap.width * 0.02);
+  const padding = Math.round(decoded.width * 0.02);
   const avatarSize = Math.round(barHeight * 0.7);
   const avatarMargin = Math.round(barHeight * 0.15);
 
@@ -110,21 +118,21 @@ async function applyBrandingBar(
   if (config.profileBitmap) {
     const avatarX = padding;
     const avatarY = barY + avatarMargin;
-    drawCircleImage(ctx, config.profileBitmap, avatarX, avatarY, avatarSize);
+    drawCircleImage(ctx, config.profileBitmap.source, avatarX, avatarY, avatarSize);
     textStartX = padding + avatarSize + Math.round(padding * 0.8);
   }
 
   // QR code (right side)
-  let rightEdge = bitmap.width - padding;
+  let rightEdge = decoded.width - padding;
   if (config.qrBitmap) {
     const qrSize = Math.round(barHeight * 0.75);
-    const qrX = bitmap.width - padding - qrSize;
+    const qrX = decoded.width - padding - qrSize;
     const qrY = barY + Math.round((barHeight - qrSize) / 2);
     // White background for QR readability
     ctx.fillStyle = "#FFFFFF";
     const qrPad = Math.round(qrSize * 0.06);
     ctx.fillRect(qrX - qrPad, qrY - qrPad, qrSize + qrPad * 2, qrSize + qrPad * 2);
-    ctx.drawImage(config.qrBitmap, qrX, qrY, qrSize, qrSize);
+    ctx.drawImage(config.qrBitmap.source, qrX, qrY, qrSize, qrSize);
     rightEdge = qrX - padding;
   }
 
@@ -154,9 +162,9 @@ async function applyBrandingBar(
     ctx.fillText(text, x, y);
   });
 
-  bitmap.close();
+  decoded.close();
 
-  const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+  const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.92 });
   const baseName = file.name.replace(/\.[^.]+$/, "");
 
   return {
@@ -221,10 +229,10 @@ export default function AgentBrandingBarPage() {
     setState("processing");
 
     // Pre-load profile and QR bitmaps once
-    let profileBitmap: ImageBitmap | null = null;
-    let qrBitmap: ImageBitmap | null = null;
-    if (profileFile) profileBitmap = await createImageBitmap(profileFile);
-    if (qrFile) qrBitmap = await createImageBitmap(qrFile);
+    let profileBitmap: DecodedCanvasImage | null = null;
+    let qrBitmap: DecodedCanvasImage | null = null;
+    if (profileFile) profileBitmap = await decodeImageWithFallback(profileFile, profileFile.name);
+    if (qrFile) qrBitmap = await decodeImageWithFallback(qrFile, qrFile.name);
 
     const processed: ProcessedImage[] = [];
     for (let i = 0; i < files.length; i++) {
