@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import NextImage from "next/image";
+import { Icon } from "@iconify/react";
 const faqItems = [
   {
     question: "What should I blur in listing photos?",
@@ -248,9 +249,7 @@ export default function BlurPhotoPrivacyPage() {
               className="border-2 border-dashed border-gray-300 rounded-xl p-16 text-center cursor-pointer hover:border-primary transition-colors"
               onClick={() => document.getElementById("blur-file-input")?.click()}
             >
-              <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.338-2.32 3 3 0 013.862 3.05A3 3 0 0118 19.5H6.75z" />
-              </svg>
+              <Icon icon="heroicons:cloud-arrow-up" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-lg text-gray-600 mb-2">Drop a listing photo here, or click to browse</p>
               <p className="text-sm text-gray-400">Supports JPG, PNG, WebP</p>
               <input

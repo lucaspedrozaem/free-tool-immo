@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { Icon } from "@iconify/react";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -36,19 +37,7 @@ export default function ContactPage() {
         {submitted ? (
           <div className="mt-10 bg-white rounded-xl shadow-md p-8 text-center">
             <div className="w-14 h-14 mx-auto mb-4 bg-success/10 rounded-full flex items-center justify-center">
-              <svg
-                className="w-7 h-7 text-success"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              <Icon icon="heroicons:check" className="w-7 h-7 text-success" />
             </div>
             <h2 className="font-heading font-bold text-xl text-midnight">
               Your email client should have opened

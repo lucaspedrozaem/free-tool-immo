@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import Image from "next/image";
+import { Icon } from "@iconify/react";
 const faqItems = [
   {
     question: "What size is the flyer?",
@@ -288,9 +289,7 @@ export default function OpenHouseFlyerGeneratorPage() {
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
               >
-                <svg className="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
+                <Icon icon="heroicons:plus" className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-600">
                   Click or drag & drop photos
                 </p>

@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { Icon } from "@iconify/react";
 
 interface PhotoDropzoneProps {
   onFiles: (files: File[]) => void;
@@ -47,19 +48,10 @@ export function PhotoDropzone({
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center gap-3">
-          <svg
+          <Icon
+            icon="heroicons:arrow-up-tray"
             className={`w-10 h-10 ${isDragActive ? "text-primary" : "text-border"}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-            />
-          </svg>
+          />
           <div>
             <p className="font-semibold text-slate-dark">
               {isDragActive
@@ -89,19 +81,10 @@ export function PhotoDropzone({
         <div
           className={`w-16 h-16 rounded-full flex items-center justify-center ${isDragActive ? "bg-primary/10" : "bg-gray-100"}`}
         >
-          <svg
+          <Icon
+            icon="heroicons:arrow-up-tray"
             className={`w-8 h-8 ${isDragActive ? "text-primary" : "text-gray-400"}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-            />
-          </svg>
+          />
         </div>
         <div>
           <p className="text-xl font-semibold text-slate-dark">

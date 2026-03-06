@@ -1,6 +1,7 @@
 "use client";
 
 import type { ProcessingProgress } from "@/lib/image-processing";
+import { Icon } from "@iconify/react";
 
 interface ProgressBarProps {
   progress: ProcessingProgress;
@@ -13,25 +14,10 @@ export function ProgressBar({ progress }: ProgressBarProps) {
     <div className="bg-white rounded-xl shadow-md p-4 sm:p-8 text-center">
       <div className="mb-6">
         <div className="w-16 h-16 mx-auto mb-4 relative">
-          <svg className="w-16 h-16 animate-spin text-primary/20" viewBox="0 0 24 24">
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="3"
-              fill="none"
-            />
-            <path
-              className="opacity-75"
-              fill="none"
-              stroke="#2563EB"
-              strokeWidth="3"
-              strokeLinecap="round"
-              d="M12 2a10 10 0 0 1 10 10"
-            />
-          </svg>
+          <Icon
+            icon="heroicons:arrow-path"
+            className="w-16 h-16 animate-spin text-primary"
+          />
         </div>
         <p className="text-lg font-semibold text-slate-dark">
           {progress.stage} {progress.current} of {progress.total} photos...
@@ -50,19 +36,7 @@ export function ProgressBar({ progress }: ProgressBarProps) {
       <p className="text-sm text-gray-500 mt-2">{percentage}% complete</p>
 
       <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-400">
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-          />
-        </svg>
+        <Icon icon="heroicons:lock-closed" className="w-4 h-4" />
         Processing locally on your device. Your photos never leave your browser.
       </div>
     </div>

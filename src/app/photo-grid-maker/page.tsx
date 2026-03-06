@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import Image from "next/image";
+import { Icon } from "@iconify/react";
 type GridLayout = "2x2" | "2x1" | "1x2" | "3x1" | "1x3";
 
 const GRID_CONFIGS: Record<GridLayout, { cols: number; rows: number; count: number }> = {
@@ -251,9 +252,7 @@ export default function PhotoGridMakerPage() {
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
           >
-            <svg className="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
+            <Icon icon="heroicons:plus" className="w-10 h-10 text-gray-400 mx-auto mb-3" />
             <p className="text-sm font-medium text-gray-600">
               Click or drag & drop to upload photos
             </p>

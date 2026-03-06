@@ -7,6 +7,7 @@ import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 import type {
   ProcessingOptions,
   ProcessedImage,
@@ -21,42 +22,42 @@ const toolCategories = [
     label: "Convert & Format",
     desc: "File format conversions for MLS compatibility",
     tools: [
-      { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter", desc: "Convert iPhone HEIC photos to JPG instantly", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" },
-      { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter", desc: "Convert WebP, PNG, AVIF to universal JPG", icon: "M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" },
+      { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter", desc: "Convert iPhone HEIC photos to JPG instantly", icon: "heroicons:photo" },
+      { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter", desc: "Convert WebP, PNG, AVIF to universal JPG", icon: "heroicons:cloud-arrow-down" },
     ],
   },
   {
     label: "Resize & Crop",
     desc: "Dimension adjustments for MLS & listing platforms",
     tools: [
-      { name: "MLS Photo Resizer", href: "/mls-photo-resizer", desc: "Format photos with hard-coded MLS standards", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
-      { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter", desc: "Meet Zillow and Realtor.com photo requirements", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
-      { name: "Online Image Resizer", href: "/online-image-resizer", desc: "Resize photos to any dimension", icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" },
-      { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper", desc: "Crop to 4:3, 16:9, 1:1 for MLS & social", icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" },
-      { name: "Batch Image Compressor", href: "/batch-image-compressor", desc: "Compress photos under 5MB for MLS uploads", icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" },
+      { name: "MLS Photo Resizer", href: "/mls-photo-resizer", desc: "Format photos with hard-coded MLS standards", icon: "heroicons:home" },
+      { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter", desc: "Meet Zillow and Realtor.com photo requirements", icon: "heroicons:shield-check" },
+      { name: "Online Image Resizer", href: "/online-image-resizer", desc: "Resize photos to any dimension", icon: "heroicons:arrows-pointing-out" },
+      { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper", desc: "Crop to 4:3, 16:9, 1:1 for MLS & social", icon: "heroicons:view-columns" },
+      { name: "Batch Image Compressor", href: "/batch-image-compressor", desc: "Compress photos under 5MB for MLS uploads", icon: "heroicons:archive-box" },
     ],
   },
   {
     label: "Privacy & Cleanup",
     desc: "Metadata removal and privacy compliance",
     tools: [
-      { name: "Remove EXIF Data", href: "/remove-exif-data", desc: "Strip GPS & metadata for privacy compliance", icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" },
-      { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool", desc: "Blur license plates, faces & sensitive items", icon: "M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" },
-      { name: "Bulk Rename Photos", href: "/bulk-rename-photos", desc: "SEO-friendly naming like 123-Main-St-01.jpg", icon: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" },
+      { name: "Remove EXIF Data", href: "/remove-exif-data", desc: "Strip GPS & metadata for privacy compliance", icon: "heroicons:lock-closed" },
+      { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool", desc: "Blur license plates, faces & sensitive items", icon: "heroicons:eye-slash" },
+      { name: "Bulk Rename Photos", href: "/bulk-rename-photos", desc: "SEO-friendly naming like 123-Main-St-01.jpg", icon: "heroicons:tag" },
     ],
   },
   {
     label: "Brand & Market",
     desc: "Branding, social media, and marketing tools",
     tools: [
-      { name: "Batch Watermark Photos", href: "/batch-watermark-photos", desc: "Add your logo or text watermark to listings", icon: "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" },
-      { name: "Agent Branding Bar", href: "/agent-branding-bar", desc: "Add your name, phone & brokerage to photos", icon: "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" },
-      { name: "Agent Intro/Outro Card", href: "/agent-intro-card", desc: "Contact card for slideshows & video intros", icon: "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" },
-      { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos", desc: "Add QR code to all listing photos in bulk", icon: "M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" },
-      { name: "Status Overlays", href: "/listing-status-overlays", desc: "Just Listed, Just Sold & more ribbons", icon: "M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" },
-      { name: "Photo Grid Maker", href: "/photo-grid-maker", desc: "Create 2x2 or 3x1 listing photo collages", icon: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" },
-      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter", desc: "Vertical format for Stories, TikTok & Reels", icon: "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" },
-      { name: "Open House Flyer Maker", href: "/open-house-flyer-generator", desc: "Generate print-ready listing flyers", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+      { name: "Batch Watermark Photos", href: "/batch-watermark-photos", desc: "Add your logo or text watermark to listings", icon: "heroicons:paint-brush" },
+      { name: "Agent Branding Bar", href: "/agent-branding-bar", desc: "Add your name, phone & brokerage to photos", icon: "heroicons:identification" },
+      { name: "Agent Intro/Outro Card", href: "/agent-intro-card", desc: "Contact card for slideshows & video intros", icon: "heroicons:identification" },
+      { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos", desc: "Add QR code to all listing photos in bulk", icon: "heroicons:qr-code" },
+      { name: "Status Overlays", href: "/listing-status-overlays", desc: "Just Listed, Just Sold & more ribbons", icon: "heroicons:flag" },
+      { name: "Photo Grid Maker", href: "/photo-grid-maker", desc: "Create 2x2 or 3x1 listing photo collages", icon: "heroicons:squares-2x2" },
+      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter", desc: "Vertical format for Stories, TikTok & Reels", icon: "heroicons:device-phone-mobile" },
+      { name: "Open House Flyer Maker", href: "/open-house-flyer-generator", desc: "Generate print-ready listing flyers", icon: "heroicons:document-text" },
     ],
   },
 ];
@@ -471,15 +472,10 @@ export default function HomePage() {
                   className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors"
                 >
                   Need something else?
-                  <svg
+                  <Icon
+                    icon="heroicons:chevron-down"
                     className={`w-4 h-4 transition-transform ${showToolsDropdown ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
+                  />
                 </button>
                 {showToolsDropdown && (
                   <div className="mt-4 bg-white rounded-xl border border-border-light shadow-md p-4 text-left">
@@ -496,15 +492,7 @@ export default function HomePage() {
                                 href={tool.href}
                                 className="flex items-center gap-2 px-3 py-2 text-sm text-slate-dark hover:bg-primary-light hover:text-primary rounded-lg transition-colors"
                               >
-                                <svg
-                                  className="w-4 h-4 text-primary flex-shrink-0"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                >
-                                  <path strokeLinecap="round" strokeLinejoin="round" d={tool.icon} />
-                                </svg>
+                                <Icon icon={tool.icon} className="w-4 h-4 text-primary flex-shrink-0" />
                                 {tool.name}
                               </Link>
                             ))}
@@ -546,19 +534,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent">
               <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
+                <Icon icon="heroicons:bolt" className="w-7 h-7 text-primary" />
               </div>
               <h3 className="font-semibold text-xl mb-2">Lightning Fast</h3>
               <p className="text-gray-500">
@@ -568,19 +544,7 @@ export default function HomePage() {
             </div>
             <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-success/5 to-transparent">
               <div className="w-14 h-14 mx-auto mb-4 bg-success/10 rounded-2xl flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-success"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                  />
-                </svg>
+                <Icon icon="heroicons:shield-check" className="w-7 h-7 text-success" />
               </div>
               <h3 className="font-semibold text-xl mb-2">MLS Compliant</h3>
               <p className="text-gray-500">
@@ -590,19 +554,7 @@ export default function HomePage() {
             </div>
             <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent">
               <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
+                <Icon icon="heroicons:lock-closed" className="w-7 h-7 text-primary" />
               </div>
               <h3 className="font-semibold text-xl mb-2">100% Private</h3>
               <p className="text-gray-500">
@@ -702,9 +654,7 @@ export default function HomePage() {
               Unlike other tools that upload your images to remote servers, MLS Photo Tools processes everything locally in your browser. Your unreleased listings, client photos, and sensitive property data stay 100% private.
             </p>
             <div className="flex items-center gap-2 text-sm text-success-dark font-medium">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
+              <Icon icon="heroicons:shield-check" className="w-5 h-5" />
               No uploads, no tracking, no data collection
             </div>
           </div>
@@ -751,19 +701,7 @@ export default function HomePage() {
                       className="bg-white rounded-xl border border-border-light p-4 hover:shadow-lg hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-200 group flex items-start gap-3"
                     >
                       <div className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                        <svg
-                          className="w-4.5 h-4.5 text-primary group-hover:text-white transition-colors"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d={tool.icon}
-                          />
-                        </svg>
+                        <Icon icon={tool.icon} className="w-4.5 h-4.5 text-primary group-hover:text-white transition-colors" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm mb-0.5">

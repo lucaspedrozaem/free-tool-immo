@@ -3,11 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { Icon } from "@iconify/react";
 
 const toolCategories = [
   {
     label: "Convert",
-    icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
+    icon: "heroicons:photo",
     tools: [
       { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter" },
       { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter" },
@@ -15,7 +16,7 @@ const toolCategories = [
   },
   {
     label: "Resize & Crop",
-    icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4",
+    icon: "heroicons:arrows-pointing-out",
     tools: [
       { name: "MLS Photo Resizer", href: "/mls-photo-resizer" },
       { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter" },
@@ -26,7 +27,7 @@ const toolCategories = [
   },
   {
     label: "Privacy",
-    icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+    icon: "heroicons:lock-closed",
     tools: [
       { name: "Remove EXIF Data", href: "/remove-exif-data" },
       { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool" },
@@ -35,7 +36,7 @@ const toolCategories = [
   },
   {
     label: "Brand & Market",
-    icon: "M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z",
+    icon: "heroicons:megaphone",
     tools: [
       { name: "Batch Watermark Photos", href: "/batch-watermark-photos" },
       { name: "Agent Branding Bar", href: "/agent-branding-bar" },
@@ -82,29 +83,12 @@ export function Navbar() {
                 onMouseLeave={() => setOpenCategory(null)}
               >
                 <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-dark hover:text-primary transition-colors rounded-lg hover:bg-primary-light/50">
-                  <svg
-                    className="w-4 h-4 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d={category.icon}
-                    />
-                  </svg>
+                  <Icon icon={category.icon} className="w-4 h-4 text-primary" />
                   {category.label}
-                  <svg
+                  <Icon
+                    icon="heroicons:chevron-down"
                     className={`w-3 h-3 text-gray-400 transition-transform ${openCategory === category.label ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
+                  />
                 </button>
 
                 {openCategory === category.label && (
@@ -145,19 +129,10 @@ export function Navbar() {
               setMobileSection(null);
             }}
           >
-            <svg
+            <Icon
+              icon={mobileOpen ? "heroicons:x-mark" : "heroicons:bars-3"}
               className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
+            />
           </button>
         </div>
 
@@ -176,28 +151,15 @@ export function Navbar() {
                     className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-slate-dark hover:bg-primary-light rounded-md"
                   >
                     <span className="flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d={category.icon} />
-                      </svg>
+                      <Icon icon={category.icon} className="w-4 h-4 text-primary" />
                       {category.label}
                     </span>
-                    <svg
+                    <Icon
+                      icon="heroicons:chevron-down"
                       className={`w-4 h-4 text-gray-400 transition-transform ${
                         mobileSection === category.label ? "rotate-180" : ""
                       }`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
+                    />
                   </button>
                   {mobileSection === category.label && (
                     <div className="pl-9 space-y-0.5 mt-0.5 mb-1">

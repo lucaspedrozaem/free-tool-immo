@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@iconify/react";
 
 interface FAQItem {
   question: string;
@@ -25,19 +26,10 @@ export function FAQSection({ items }: FAQSectionProps) {
             <span className="font-semibold text-slate-dark pr-4">
               {item.question}
             </span>
-            <svg
+            <Icon
+              icon="heroicons:chevron-down"
               className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${openIndex === i ? "rotate-180" : ""}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+            />
           </button>
           {openIndex === i && (
             <div className="px-6 pb-4 text-gray-600 leading-relaxed">
