@@ -12,7 +12,7 @@ import type {
   ProcessedImage,
   ProcessingProgress,
 } from "@/lib/image-processing";
-import { processImages } from "@/lib/image-processing";
+import { normalizeProcessingError, processImages } from "@/lib/image-processing";
 
 type AppState = "upload" | "configure" | "processing" | "done";
 
@@ -107,6 +107,7 @@ export default function HomePage() {
     stage: "Processing",
   });
   const [results, setResults] = useState<ProcessedImage[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   // Config state
   const [optimizeMLS, setOptimizeMLS] = useState(true);
@@ -126,10 +127,12 @@ export default function HomePage() {
 
   const handleFiles = useCallback((newFiles: File[]) => {
     setFiles(newFiles);
+    setError(null);
     setState("configure");
   }, []);
 
   const handleProcess = async () => {
+    setError(null);
     setState("processing");
 
     const options: ProcessingOptions = {
@@ -166,7 +169,12 @@ export default function HomePage() {
       setResults(processed);
       setState("done");
     } catch (err) {
-      console.error("Processing error:", err);
+      const normalizedError = normalizeProcessingError(err);
+      const context = normalizedError.fileName
+        ? `Failed processing ${normalizedError.fileName}. `
+        : "";
+      setError(`${context}${normalizedError.message}`);
+      console.error("Processing error:", normalizedError);
       setState("configure");
     }
   };
@@ -174,6 +182,7 @@ export default function HomePage() {
   const handleReset = () => {
     setFiles([]);
     setResults([]);
+    setError(null);
     setState("upload");
   };
 
@@ -232,6 +241,38 @@ export default function HomePage() {
                   Start Over
                 </button>
               </div>
+
+              {error && (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                  <div className="flex items-start justify-between gap-4">
+                    <p>{error}</p>
+                    <button
+                      type="button"
+                      onClick={() => setError(null)}
+                      className="text-red-700 hover:text-red-900"
+                      aria-label="Dismiss error"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleProcess}
+                      className="rounded-md bg-red-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-800"
+                    >
+                      Retry
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                    >
+                      Start Over
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Thumbnails */}
