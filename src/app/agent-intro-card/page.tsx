@@ -4,6 +4,12 @@ import { useState, useRef } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+} from "@/lib/canvas-runtime";
 type CardStyle = "dark" | "light" | "brand";
 
 const faqItems = [
@@ -95,8 +101,8 @@ export default function AgentIntroCardPage() {
 
     const W = 1920;
     const H = 1080;
-    const canvas = new OffscreenCanvas(W, H);
-    const ctx = canvas.getContext("2d")!;
+    const canvas = createRuntimeCanvas(W, H);
+    const ctx = getRuntime2DContext(canvas);
 
     const bg = getBgColor();
     const textCol = getTextColor();
@@ -108,24 +114,24 @@ export default function AgentIntroCardPage() {
 
     // Headshot on the right side
     if (headshotFile) {
-      const bm = await createImageBitmap(headshotFile);
+      const headshotImage = await decodeImageWithFallback(headshotFile, headshotFile.name);
       // Draw headshot on right ~40% of card, bottom-aligned
       const hsW = Math.round(W * 0.38);
       const hsH = H;
       const hsX = W - hsW;
 
       // Cover-fit bottom-aligned
-      const srcRatio = bm.width / bm.height;
+      const srcRatio = headshotImage.width / headshotImage.height;
       const dstRatio = hsW / hsH;
-      let sx = 0, sy = 0, sw = bm.width, sh = bm.height;
+      let sx = 0, sy = 0, sw = headshotImage.width, sh = headshotImage.height;
       if (srcRatio > dstRatio) {
-        sw = Math.round(bm.height * dstRatio);
-        sx = Math.round((bm.width - sw) / 2);
+        sw = Math.round(headshotImage.height * dstRatio);
+        sx = Math.round((headshotImage.width - sw) / 2);
       } else {
-        sh = Math.round(bm.width / dstRatio);
+        sh = Math.round(headshotImage.width / dstRatio);
         sy = 0; // top-aligned to show face
       }
-      ctx.drawImage(bm, sx, sy, sw, sh, hsX, 0, hsW, hsH);
+      ctx.drawImage(headshotImage.source, sx, sy, sw, sh, hsX, 0, hsW, hsH);
 
       // Subtle gradient fade from bg into headshot
       const grad = ctx.createLinearGradient(hsX - 100, 0, hsX + 80, 0);
@@ -134,7 +140,7 @@ export default function AgentIntroCardPage() {
       ctx.fillStyle = grad;
       ctx.fillRect(hsX - 100, 0, 200, H);
 
-      bm.close();
+      headshotImage.close();
     }
 
     // Left side content
@@ -180,20 +186,20 @@ export default function AgentIntroCardPage() {
 
     // Brokerage section (bottom left)
     if (logoFile) {
-      const logoBm = await createImageBitmap(logoFile);
+      const logoImage = await decodeImageWithFallback(logoFile, logoFile.name);
       const logoMaxH = 120;
       const logoMaxW = 400;
-      const scale = Math.min(logoMaxW / logoBm.width, logoMaxH / logoBm.height);
-      const lw = Math.round(logoBm.width * scale);
-      const lh = Math.round(logoBm.height * scale);
-      ctx.drawImage(logoBm, leftPad, H - 60 - lh, lw, lh);
+      const scale = Math.min(logoMaxW / logoImage.width, logoMaxH / logoImage.height);
+      const lw = Math.round(logoImage.width * scale);
+      const lh = Math.round(logoImage.height * scale);
+      ctx.drawImage(logoImage.source, leftPad, H - 60 - lh, lw, lh);
 
       if (brokerageName) {
         ctx.fillStyle = subCol;
         ctx.font = `22px 'DM Sans', Inter, sans-serif`;
         ctx.fillText(brokerageName, leftPad + lw + 20, H - 60 - lh / 2 + 4);
       }
-      logoBm.close();
+      logoImage.close();
     } else if (brokerageName) {
       ctx.fillStyle = textCol;
       ctx.font = `bold 48px 'DM Sans', Inter, sans-serif`;
@@ -207,7 +213,7 @@ export default function AgentIntroCardPage() {
     ctx.fillStyle = accentColor;
     ctx.fillRect(leftPad, H - 50, 200, 4);
 
-    const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.95 });
+    const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.95 });
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     setResultBlob(blob);
     setResultUrl(URL.createObjectURL(blob));

@@ -12,6 +12,12 @@ import type {
   ProcessingProgress,
 } from "@/lib/image-processing";
 import { downloadAsZip, downloadSingleImage, formatFileSize } from "@/lib/image-processing";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+} from "@/lib/canvas-runtime";
 type AppState = "upload" | "configure" | "processing" | "done";
 
 const ASPECT_PRESETS = [
@@ -58,9 +64,9 @@ async function cropImage(
   maxWidth?: number,
   quality: number = 0.92
 ): Promise<ProcessedImage> {
-  const bitmap = await createImageBitmap(file);
-  const srcW = bitmap.width;
-  const srcH = bitmap.height;
+  const decoded = await decodeImageWithFallback(file, file.name);
+  const srcW = decoded.width;
+  const srcH = decoded.height;
   const srcRatio = srcW / srcH;
 
   let cropW: number, cropH: number, cropX: number, cropY: number;
@@ -85,12 +91,12 @@ async function cropImage(
     outH = Math.round(outH * scale);
   }
 
-  const canvas = new OffscreenCanvas(outW, outH);
-  const ctx = canvas.getContext("2d")!;
-  ctx.drawImage(bitmap, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
-  bitmap.close();
+  const canvas = createRuntimeCanvas(outW, outH);
+  const ctx = getRuntime2DContext(canvas, file.name);
+  ctx.drawImage(decoded.source, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
+  decoded.close();
 
-  const blob = await canvas.convertToBlob({ type: "image/jpeg", quality });
+  const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality });
   const baseName = file.name.replace(/\.[^.]+$/, "");
 
   return {

@@ -7,6 +7,12 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+} from "@/lib/canvas-runtime";
 import type {
   ProcessedImage,
   ProcessingProgress,
@@ -62,13 +68,13 @@ async function applyStatusOverlay(
     style: RibbonStyle;
   }
 ): Promise<ProcessedImage> {
-  const bitmap = await createImageBitmap(file);
-  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-  const ctx = canvas.getContext("2d")!;
-  ctx.drawImage(bitmap, 0, 0);
+  const decoded = await decodeImageWithFallback(file, file.name);
+  const canvas = createRuntimeCanvas(decoded.width, decoded.height);
+  const ctx = getRuntime2DContext(canvas, file.name);
+  ctx.drawImage(decoded.source, 0, 0);
 
-  const w = bitmap.width;
-  const h = bitmap.height;
+  const w = decoded.width;
+  const h = decoded.height;
 
   if (config.style === "corner") {
     // Angled corner ribbon
@@ -143,9 +149,9 @@ async function applyStatusOverlay(
     ctx.fillText(config.text, w / 2, h - bannerH / 2);
   }
 
-  bitmap.close();
+  decoded.close();
 
-  const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+  const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.92 });
   const baseName = file.name.replace(/\.[^.]+$/, "");
   const statusSlug = config.text.toLowerCase().replace(/\s+/g, "-");
 

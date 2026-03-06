@@ -4,6 +4,14 @@ import { useState, useRef, useCallback } from "react";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+  type DecodedCanvasImage,
+  type RuntimeCanvas2DContext,
+} from "@/lib/canvas-runtime";
 const faqItems = [
   {
     question: "What size is the flyer?",
@@ -104,24 +112,24 @@ export default function OpenHouseFlyerGeneratorPage() {
 
   // Cover-fit helper
   function coverFit(
-    ctx: OffscreenCanvasRenderingContext2D,
-    bm: ImageBitmap,
+    ctx: RuntimeCanvas2DContext,
+    image: DecodedCanvasImage,
     dx: number,
     dy: number,
     dw: number,
     dh: number
   ) {
-    const srcRatio = bm.width / bm.height;
+    const srcRatio = image.width / image.height;
     const dstRatio = dw / dh;
-    let sx = 0, sy = 0, sw = bm.width, sh = bm.height;
+    let sx = 0, sy = 0, sw = image.width, sh = image.height;
     if (srcRatio > dstRatio) {
-      sw = Math.round(bm.height * dstRatio);
-      sx = Math.round((bm.width - sw) / 2);
+      sw = Math.round(image.height * dstRatio);
+      sx = Math.round((image.width - sw) / 2);
     } else {
-      sh = Math.round(bm.width / dstRatio);
-      sy = Math.round((bm.height - sh) / 2);
+      sh = Math.round(image.width / dstRatio);
+      sy = Math.round((image.height - sh) / 2);
     }
-    ctx.drawImage(bm, sx, sy, sw, sh, dx, dy, dw, dh);
+    ctx.drawImage(image.source, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
   const handleGenerate = async () => {
@@ -130,8 +138,8 @@ export default function OpenHouseFlyerGeneratorPage() {
 
     const W = 2550;
     const H = 3300;
-    const canvas = new OffscreenCanvas(W, H);
-    const ctx = canvas.getContext("2d")!;
+    const canvas = createRuntimeCanvas(W, H);
+    const ctx = getRuntime2DContext(canvas);
     const pad = 80;
 
     // White background
@@ -150,12 +158,12 @@ export default function OpenHouseFlyerGeneratorPage() {
     ctx.fillText(headline.toUpperCase(), W / 2, 110);
 
     // Main photo with rounded corners effect (just draw with small inset)
-    const mainBitmap = await createImageBitmap(photos[0].file);
+    const mainImage = await decodeImageWithFallback(photos[0].file, photos[0].file.name);
     const mainY = 260;
     const mainH = 1350;
     const mainW = W - pad * 2;
-    coverFit(ctx, mainBitmap, pad, mainY, mainW, mainH);
-    mainBitmap.close();
+    coverFit(ctx, mainImage, pad, mainY, mainW, mainH);
+    mainImage.close();
 
     // Accent line under main photo
     ctx.fillStyle = accentColor;
@@ -171,9 +179,9 @@ export default function OpenHouseFlyerGeneratorPage() {
       const smallW = (mainW - totalGap) / secondaryPhotos.length;
 
       for (let i = 0; i < secondaryPhotos.length; i++) {
-        const bm = await createImageBitmap(secondaryPhotos[i].file);
-        coverFit(ctx, bm, pad + i * (smallW + gapSize), smallY, smallW, smallH);
-        bm.close();
+        const secondaryImage = await decodeImageWithFallback(secondaryPhotos[i].file, secondaryPhotos[i].file.name);
+        coverFit(ctx, secondaryImage, pad + i * (smallW + gapSize), smallY, smallW, smallH);
+        secondaryImage.close();
       }
     }
 
@@ -231,7 +239,7 @@ export default function OpenHouseFlyerGeneratorPage() {
       ctx.fillText(contactLine, W / 2, H - footerH + 160);
     }
 
-    const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+    const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.92 });
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     setResultBlob(blob);
     setResultUrl(URL.createObjectURL(blob));

@@ -7,6 +7,13 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
+import {
+  createRuntimeCanvas,
+  decodeImageWithFallback,
+  getRuntime2DContext,
+  runtimeCanvasToBlob,
+  type DecodedCanvasImage,
+} from "@/lib/canvas-runtime";
 import type {
   ProcessedImage,
   ProcessingProgress,
@@ -45,7 +52,7 @@ const faqItems = [
 
 async function applyQrCode(
   file: File,
-  qrBitmap: ImageBitmap,
+  qrBitmap: DecodedCanvasImage,
   config: {
     position: QrPosition;
     sizePercent: number;
@@ -53,14 +60,14 @@ async function applyQrCode(
     padding: number;
   }
 ): Promise<ProcessedImage> {
-  const bitmap = await createImageBitmap(file);
-  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-  const ctx = canvas.getContext("2d")!;
+  const decoded = await decodeImageWithFallback(file, file.name);
+  const canvas = createRuntimeCanvas(decoded.width, decoded.height);
+  const ctx = getRuntime2DContext(canvas, file.name);
 
-  ctx.drawImage(bitmap, 0, 0);
+  ctx.drawImage(decoded.source, 0, 0);
 
-  const qrSize = Math.round(Math.min(bitmap.width, bitmap.height) * (config.sizePercent / 100));
-  const margin = Math.round(bitmap.width * 0.025);
+  const qrSize = Math.round(Math.min(decoded.width, decoded.height) * (config.sizePercent / 100));
+  const margin = Math.round(decoded.width * 0.025);
   const pad = config.padding;
 
   let x: number, y: number;
@@ -70,17 +77,17 @@ async function applyQrCode(
       y = margin;
       break;
     case "top-right":
-      x = bitmap.width - margin - qrSize - pad * 2;
+      x = decoded.width - margin - qrSize - pad * 2;
       y = margin;
       break;
     case "bottom-left":
       x = margin;
-      y = bitmap.height - margin - qrSize - pad * 2;
+      y = decoded.height - margin - qrSize - pad * 2;
       break;
     case "bottom-right":
     default:
-      x = bitmap.width - margin - qrSize - pad * 2;
-      y = bitmap.height - margin - qrSize - pad * 2;
+      x = decoded.width - margin - qrSize - pad * 2;
+      y = decoded.height - margin - qrSize - pad * 2;
       break;
   }
 
@@ -90,12 +97,12 @@ async function applyQrCode(
   ctx.fillRect(x, y, qrSize + pad * 2, qrSize + pad * 2);
 
   // QR code
-  ctx.drawImage(qrBitmap, x + pad, y + pad, qrSize, qrSize);
+  ctx.drawImage(qrBitmap.source, x + pad, y + pad, qrSize, qrSize);
   ctx.globalAlpha = 1;
 
-  bitmap.close();
+  decoded.close();
 
-  const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+  const blob = await runtimeCanvasToBlob(canvas, { type: "image/jpeg", quality: 0.92 });
   const baseName = file.name.replace(/\.[^.]+$/, "");
 
   return {
@@ -140,7 +147,7 @@ export default function BulkQrCodePage() {
     if (!qrFile) return;
     setState("processing");
 
-    const qrBitmap = await createImageBitmap(qrFile);
+    const qrBitmap = await decodeImageWithFallback(qrFile, qrFile.name);
     const pad = Math.max(4, Math.round(sizePercent * 0.8));
     const processed: ProcessedImage[] = [];
 
