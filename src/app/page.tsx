@@ -1,20 +1,14 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Image from "next/image";
 import Link from "next/link";
-import type {
-  ProcessingOptions,
-  ProcessedImage,
-  ProcessingProgress,
-} from "@/lib/image-processing";
-import { processImages } from "@/lib/image-processing";
-
-type AppState = "upload" | "configure" | "processing" | "done";
+import type { ProcessingOptions } from "@/lib/image-processing";
+import { useImageProcessingFlow } from "@/hooks/useImageProcessingFlow";
 
 const toolCategories = [
   {
@@ -98,15 +92,16 @@ const faqItems = [
 ];
 
 export default function HomePage() {
-  const [state, setState] = useState<AppState>("upload");
-  const [files, setFiles] = useState<File[]>([]);
-  const [progress, setProgress] = useState<ProcessingProgress>({
-    current: 0,
-    total: 0,
-    currentFile: "",
-    stage: "Processing",
-  });
-  const [results, setResults] = useState<ProcessedImage[]>([]);
+  const {
+    state,
+    files,
+    progress,
+    results,
+    errorMessage,
+    handleFiles,
+    runWithOptions,
+    reset,
+  } = useImageProcessingFlow();
 
   // Config state
   const [optimizeMLS, setOptimizeMLS] = useState(true);
@@ -124,14 +119,7 @@ export default function HomePage() {
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.5);
   const [showToolsDropdown, setShowToolsDropdown] = useState(false);
 
-  const handleFiles = useCallback((newFiles: File[]) => {
-    setFiles(newFiles);
-    setState("configure");
-  }, []);
-
   const handleProcess = async () => {
-    setState("processing");
-
     const options: ProcessingOptions = {
       format: "jpeg",
     };
@@ -161,20 +149,7 @@ export default function HomePage() {
       };
     }
 
-    try {
-      const processed = await processImages(files, options, setProgress);
-      setResults(processed);
-      setState("done");
-    } catch (err) {
-      console.error("Processing error:", err);
-      setState("configure");
-    }
-  };
-
-  const handleReset = () => {
-    setFiles([]);
-    setResults([]);
-    setState("upload");
+    await runWithOptions(options);
   };
 
   return (
@@ -221,12 +196,17 @@ export default function HomePage() {
 
           {state === "configure" && (
             <div className="text-left">
+              {errorMessage && (
+                <p className="mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-2 text-sm">
+                  {errorMessage}
+                </p>
+              )}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-heading font-bold text-2xl">
                   Listing Prep Dashboard
                 </h2>
                 <button
-                  onClick={handleReset}
+                  onClick={reset}
                   className="text-sm text-gray-500 hover:text-primary"
                 >
                   Start Over
@@ -523,7 +503,7 @@ export default function HomePage() {
           {state === "done" && (
             <ResultsPanel
               images={results}
-              onReset={handleReset}
+              onReset={reset}
               zipName={
                 renamePrefix
                   ? renamePrefix.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")

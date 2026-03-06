@@ -1,18 +1,15 @@
 "use client";
 import Image from "next/image";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
-import type {
-  ProcessedImage,
-  ProcessingProgress,
-} from "@/lib/image-processing";
-
-type AppState = "upload" | "configure" | "processing" | "done";
+import type { ProcessedImage } from "@/lib/image-processing";
+import { useImageProcessingFlow } from "@/hooks/useImageProcessingFlow";
+import { runImagePipeline } from "@/lib/image-pipeline";
 type RibbonStyle = "corner" | "banner-top" | "banner-bottom";
 
 const STATUS_PRESETS = [
@@ -161,12 +158,16 @@ async function applyStatusOverlay(
 }
 
 export default function ListingStatusOverlaysPage() {
-  const [state, setState] = useState<AppState>("upload");
-  const [files, setFiles] = useState<File[]>([]);
-  const [progress, setProgress] = useState<ProcessingProgress>({
-    current: 0, total: 0, currentFile: "", stage: "Applying overlay",
-  });
-  const [results, setResults] = useState<ProcessedImage[]>([]);
+  const {
+    state,
+    files,
+    progress,
+    results,
+    errorMessage,
+    handleFiles,
+    runProcessing,
+    reset,
+  } = useImageProcessingFlow({ initialStage: "Applying overlay" });
 
   const [selectedPreset, setSelectedPreset] = useState(0);
   const [customText, setCustomText] = useState("");
@@ -177,32 +178,22 @@ export default function ListingStatusOverlaysPage() {
   const activeText = useCustom ? customText : STATUS_PRESETS[selectedPreset].text;
   const activeColor = useCustom ? customColor : STATUS_PRESETS[selectedPreset].color;
 
-  const handleFiles = useCallback((newFiles: File[]) => {
-    setFiles(newFiles);
-    setState("configure");
-  }, []);
-
   const handleProcess = async () => {
     if (!activeText.trim()) return;
-    setState("processing");
-    const processed: ProcessedImage[] = [];
-    for (let i = 0; i < files.length; i++) {
-      setProgress({
-        current: i + 1, total: files.length, currentFile: files[i].name, stage: "Applying overlay",
-      });
-      const result = await applyStatusOverlay(files[i], {
-        text: activeText, color: activeColor, style: ribbonStyle,
-      });
-      processed.push(result);
-    }
-    setResults(processed);
-    setState("done");
-  };
 
-  const handleReset = () => {
-    setFiles([]);
-    setResults([]);
-    setState("upload");
+    await runProcessing((currentFiles, onProgress) =>
+      runImagePipeline({
+        files: currentFiles,
+        stage: "Applying overlay",
+        onProgress,
+        processor: (file) =>
+          applyStatusOverlay(file, {
+            text: activeText,
+            color: activeColor,
+            style: ribbonStyle,
+          }),
+      })
+    );
   };
 
   return (
@@ -236,11 +227,16 @@ export default function ListingStatusOverlaysPage() {
 
           {state === "configure" && (
             <div>
+              {errorMessage && (
+                <p className="mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-2 text-sm">
+                  {errorMessage}
+                </p>
+              )}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-heading font-bold text-2xl">
                   {files.length} Photo{files.length !== 1 ? "s" : ""} Ready
                 </h2>
-                <button onClick={handleReset} className="text-sm text-gray-500 hover:text-primary">
+                <button onClick={reset} className="text-sm text-gray-500 hover:text-primary">
                   Start Over
                 </button>
               </div>
@@ -379,7 +375,7 @@ export default function ListingStatusOverlaysPage() {
           )}
 
           {state === "processing" && <ProgressBar progress={progress} />}
-          {state === "done" && <ResultsPanel images={results} onReset={handleReset} />}
+          {state === "done" && <ResultsPanel images={results} onReset={reset} />}
         </div>
       </section>
 

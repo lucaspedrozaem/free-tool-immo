@@ -1,18 +1,15 @@
 "use client";
 import Image from "next/image";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { PhotoDropzone } from "@/components/PhotoDropzone";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { FAQSection } from "@/components/FAQSection";
 import Link from "next/link";
-import type {
-  ProcessedImage,
-  ProcessingProgress,
-} from "@/lib/image-processing";
-
-type AppState = "upload" | "configure" | "processing" | "done";
+import type { ProcessedImage } from "@/lib/image-processing";
+import { useImageProcessingFlow } from "@/hooks/useImageProcessingFlow";
+import { runImagePipeline } from "@/lib/image-pipeline";
 type FillMode = "blur" | "black" | "white" | "brand" | "crop";
 
 const CANVAS_PRESETS = [
@@ -112,45 +109,31 @@ async function formatForSocial(
 }
 
 export default function SocialMediaFormatterPage() {
-  const [state, setState] = useState<AppState>("upload");
-  const [files, setFiles] = useState<File[]>([]);
-  const [progress, setProgress] = useState<ProcessingProgress>({
-    current: 0, total: 0, currentFile: "", stage: "Formatting",
-  });
-  const [results, setResults] = useState<ProcessedImage[]>([]);
+  const {
+    state,
+    files,
+    progress,
+    results,
+    errorMessage,
+    handleFiles,
+    runProcessing,
+    reset,
+  } = useImageProcessingFlow({ initialStage: "Formatting" });
   const [presetIndex, setPresetIndex] = useState(0);
   const [fillMode, setFillMode] = useState<FillMode>("blur");
   const [brandColor, setBrandColor] = useState("#2563EB");
 
-  const handleFiles = useCallback((newFiles: File[]) => {
-    setFiles(newFiles);
-    setState("configure");
-  }, []);
-
   const handleProcess = async () => {
-    setState("processing");
     const preset = CANVAS_PRESETS[presetIndex];
-    const processed: ProcessedImage[] = [];
-    for (let i = 0; i < files.length; i++) {
-      setProgress({
-        current: i + 1,
-        total: files.length,
-        currentFile: files[i].name,
+    await runProcessing((currentFiles, onProgress) =>
+      runImagePipeline({
+        files: currentFiles,
         stage: "Formatting",
-      });
-      const result = await formatForSocial(
-        files[i], preset.width, preset.height, fillMode, brandColor
-      );
-      processed.push(result);
-    }
-    setResults(processed);
-    setState("done");
-  };
-
-  const handleReset = () => {
-    setFiles([]);
-    setResults([]);
-    setState("upload");
+        onProgress,
+        processor: (file) =>
+          formatForSocial(file, preset.width, preset.height, fillMode, brandColor),
+      })
+    );
   };
 
   return (
@@ -184,11 +167,16 @@ export default function SocialMediaFormatterPage() {
 
           {state === "configure" && (
             <div>
+              {errorMessage && (
+                <p className="mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-2 text-sm">
+                  {errorMessage}
+                </p>
+              )}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-heading font-bold text-2xl">
                   {files.length} Photo{files.length !== 1 ? "s" : ""} Ready
                 </h2>
-                <button onClick={handleReset} className="text-sm text-gray-500 hover:text-primary">
+                <button onClick={reset} className="text-sm text-gray-500 hover:text-primary">
                   Start Over
                 </button>
               </div>
@@ -270,7 +258,7 @@ export default function SocialMediaFormatterPage() {
           )}
 
           {state === "processing" && <ProgressBar progress={progress} />}
-          {state === "done" && <ResultsPanel images={results} onReset={handleReset} />}
+          {state === "done" && <ResultsPanel images={results} onReset={reset} />}
         </div>
       </section>
 
