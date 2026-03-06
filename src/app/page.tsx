@@ -22,42 +22,42 @@ const toolCategories = [
     label: "Convert & Format",
     desc: "File format conversions for MLS compatibility",
     tools: [
-      { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter", desc: "Convert iPhone HEIC photos to JPG instantly", icon: "heroicons:photo" },
-      { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter", desc: "Convert WebP, PNG, AVIF to universal JPG", icon: "heroicons:cloud-arrow-down" },
+      { name: "HEIC to JPG Converter", href: "/heic-to-jpg-converter", desc: "Convert iPhone HEIC photos to JPG instantly", icon: "lucide:image" },
+      { name: "WebP/PNG to JPG Converter", href: "/webp-png-to-jpg-converter", desc: "Convert WebP, PNG, AVIF to universal JPG", icon: "lucide:cloud-download" },
     ],
   },
   {
     label: "Resize & Crop",
     desc: "Dimension adjustments for MLS & listing platforms",
     tools: [
-      { name: "MLS Photo Resizer", href: "/mls-photo-resizer", desc: "Format photos with hard-coded MLS standards", icon: "heroicons:home" },
-      { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter", desc: "Meet Zillow and Realtor.com photo requirements", icon: "heroicons:shield-check" },
-      { name: "Online Image Resizer", href: "/online-image-resizer", desc: "Resize photos to any dimension", icon: "heroicons:arrows-pointing-out" },
-      { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper", desc: "Crop to 4:3, 16:9, 1:1 for MLS & social", icon: "heroicons:view-columns" },
-      { name: "Batch Image Compressor", href: "/batch-image-compressor", desc: "Compress photos under 5MB for MLS uploads", icon: "heroicons:archive-box" },
+      { name: "MLS Photo Resizer", href: "/mls-photo-resizer", desc: "Format photos with hard-coded MLS standards", icon: "lucide:home" },
+      { name: "Zillow Photo Formatter", href: "/zillow-photo-formatter", desc: "Meet Zillow and Realtor.com photo requirements", icon: "lucide:shield-check" },
+      { name: "Online Image Resizer", href: "/online-image-resizer", desc: "Resize photos to any dimension", icon: "lucide:maximize" },
+      { name: "Batch Aspect Ratio Cropper", href: "/batch-aspect-ratio-cropper", desc: "Crop to 4:3, 16:9, 1:1 for MLS & social", icon: "lucide:columns" },
+      { name: "Batch Image Compressor", href: "/batch-image-compressor", desc: "Compress photos under 5MB for MLS uploads", icon: "lucide:archive" },
     ],
   },
   {
     label: "Privacy & Cleanup",
     desc: "Metadata removal and privacy compliance",
     tools: [
-      { name: "Remove EXIF Data", href: "/remove-exif-data", desc: "Strip GPS & metadata for privacy compliance", icon: "heroicons:lock-closed" },
-      { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool", desc: "Blur license plates, faces & sensitive items", icon: "heroicons:eye-slash" },
-      { name: "Bulk Rename Photos", href: "/bulk-rename-photos", desc: "SEO-friendly naming like 123-Main-St-01.jpg", icon: "heroicons:tag" },
+      { name: "Remove EXIF Data", href: "/remove-exif-data", desc: "Strip GPS & metadata for privacy compliance", icon: "lucide:lock" },
+      { name: "Privacy Blur Tool", href: "/blur-photo-privacy-tool", desc: "Blur license plates, faces & sensitive items", icon: "lucide:eye-off" },
+      { name: "Bulk Rename Photos", href: "/bulk-rename-photos", desc: "SEO-friendly naming like 123-Main-St-01.jpg", icon: "lucide:tag" },
     ],
   },
   {
     label: "Brand & Market",
     desc: "Branding, social media, and marketing tools",
     tools: [
-      { name: "Batch Watermark Photos", href: "/batch-watermark-photos", desc: "Add your logo or text watermark to listings", icon: "heroicons:paint-brush" },
-      { name: "Agent Branding Bar", href: "/agent-branding-bar", desc: "Add your name, phone & brokerage to photos", icon: "heroicons:identification" },
-      { name: "Agent Intro/Outro Card", href: "/agent-intro-card", desc: "Contact card for slideshows & video intros", icon: "heroicons:identification" },
-      { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos", desc: "Add QR code to all listing photos in bulk", icon: "heroicons:qr-code" },
-      { name: "Status Overlays", href: "/listing-status-overlays", desc: "Just Listed, Just Sold & more ribbons", icon: "heroicons:flag" },
-      { name: "Photo Grid Maker", href: "/photo-grid-maker", desc: "Create 2x2 or 3x1 listing photo collages", icon: "heroicons:squares-2x2" },
-      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter", desc: "Vertical format for Stories, TikTok & Reels", icon: "heroicons:device-phone-mobile" },
-      { name: "Open House Flyer Maker", href: "/open-house-flyer-generator", desc: "Generate print-ready listing flyers", icon: "heroicons:document-text" },
+      { name: "Batch Watermark Photos", href: "/batch-watermark-photos", desc: "Add your logo or text watermark to listings", icon: "lucide:paintbrush" },
+      { name: "Agent Branding Bar", href: "/agent-branding-bar", desc: "Add your name, phone & brokerage to photos", icon: "lucide:id-card" },
+      { name: "Agent Intro/Outro Card", href: "/agent-intro-card", desc: "Contact card for slideshows & video intros", icon: "lucide:id-card" },
+      { name: "Bulk QR Code on Photos", href: "/bulk-qr-code-photos", desc: "Add QR code to all listing photos in bulk", icon: "lucide:qr-code" },
+      { name: "Status Overlays", href: "/listing-status-overlays", desc: "Just Listed, Just Sold & more ribbons", icon: "lucide:flag" },
+      { name: "Photo Grid Maker", href: "/photo-grid-maker", desc: "Create 2x2 or 3x1 listing photo collages", icon: "lucide:layout-grid" },
+      { name: "9:16 Social Formatter", href: "/social-media-photo-formatter", desc: "Vertical format for Stories, TikTok & Reels", icon: "lucide:smartphone" },
+      { name: "Open House Flyer Maker", href: "/open-house-flyer-generator", desc: "Generate print-ready listing flyers", icon: "lucide:file-text" },
     ],
   },
 ];
@@ -473,7 +473,7 @@ export default function HomePage() {
                 >
                   Need something else?
                   <Icon
-                    icon="heroicons:chevron-down"
+                    icon="lucide:chevron-down"
                     className={`w-4 h-4 transition-transform ${showToolsDropdown ? "rotate-180" : ""}`}
                   />
                 </button>
@@ -534,7 +534,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent">
               <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <Icon icon="heroicons:bolt" className="w-7 h-7 text-primary" />
+                <Icon icon="lucide:zap" className="w-7 h-7 text-primary" />
               </div>
               <h3 className="font-semibold text-xl mb-2">Lightning Fast</h3>
               <p className="text-gray-500">
@@ -544,7 +544,7 @@ export default function HomePage() {
             </div>
             <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-success/5 to-transparent">
               <div className="w-14 h-14 mx-auto mb-4 bg-success/10 rounded-2xl flex items-center justify-center">
-                <Icon icon="heroicons:shield-check" className="w-7 h-7 text-success" />
+                <Icon icon="lucide:shield-check" className="w-7 h-7 text-success" />
               </div>
               <h3 className="font-semibold text-xl mb-2">MLS Compliant</h3>
               <p className="text-gray-500">
@@ -554,7 +554,7 @@ export default function HomePage() {
             </div>
             <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent">
               <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <Icon icon="heroicons:lock-closed" className="w-7 h-7 text-primary" />
+                <Icon icon="lucide:lock" className="w-7 h-7 text-primary" />
               </div>
               <h3 className="font-semibold text-xl mb-2">100% Private</h3>
               <p className="text-gray-500">
@@ -654,7 +654,7 @@ export default function HomePage() {
               Unlike other tools that upload your images to remote servers, MLS Photo Tools processes everything locally in your browser. Your unreleased listings, client photos, and sensitive property data stay 100% private.
             </p>
             <div className="flex items-center gap-2 text-sm text-success-dark font-medium">
-              <Icon icon="heroicons:shield-check" className="w-5 h-5" />
+              <Icon icon="lucide:shield-check" className="w-5 h-5" />
               No uploads, no tracking, no data collection
             </div>
           </div>

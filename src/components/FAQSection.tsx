@@ -27,7 +27,7 @@ export function FAQSection({ items }: FAQSectionProps) {
               {item.question}
             </span>
             <Icon
-              icon="heroicons:chevron-down"
+              icon="lucide:chevron-down"
               className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${openIndex === i ? "rotate-180" : ""}`}
             />
           </button>

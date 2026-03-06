@@ -15,7 +15,7 @@ export function ProgressBar({ progress }: ProgressBarProps) {
       <div className="mb-6">
         <div className="w-16 h-16 mx-auto mb-4 relative">
           <Icon
-            icon="heroicons:arrow-path"
+            icon="lucide:loader-2"
             className="w-16 h-16 animate-spin text-primary"
           />
         </div>
@@ -36,7 +36,7 @@ export function ProgressBar({ progress }: ProgressBarProps) {
       <p className="text-sm text-gray-500 mt-2">{percentage}% complete</p>
 
       <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-400">
-        <Icon icon="heroicons:lock-closed" className="w-4 h-4" />
+        <Icon icon="lucide:lock" className="w-4 h-4" />
         Processing locally on your device. Your photos never leave your browser.
       </div>
     </div>

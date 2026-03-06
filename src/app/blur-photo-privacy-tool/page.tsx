@@ -249,7 +249,7 @@ export default function BlurPhotoPrivacyPage() {
               className="border-2 border-dashed border-gray-300 rounded-xl p-16 text-center cursor-pointer hover:border-primary transition-colors"
               onClick={() => document.getElementById("blur-file-input")?.click()}
             >
-              <Icon icon="heroicons:cloud-arrow-up" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <Icon icon="lucide:cloud-upload" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-lg text-gray-600 mb-2">Drop a listing photo here, or click to browse</p>
               <p className="text-sm text-gray-400">Supports JPG, PNG, WebP</p>
               <input
