@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { SchemaMarkup } from "@/components/SchemaMarkup";
+import { ShellWrapper } from "@/components/ShellWrapper";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -49,21 +47,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-ash text-midnight antialiased">
-        <SchemaMarkup
-          schema={{
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "MLS Photo Tools",
-            url: "https://mlsphototools.com",
-            description:
-              "Free browser-based photo formatting utilities for real estate professionals.",
-          }}
-        />
-        <Navbar />
-        <main className="flex-1 overflow-x-clip">{children}</main>
-        <Footer />
-      </body>
+      <ShellWrapper>{children}</ShellWrapper>
     </html>
   );
 }

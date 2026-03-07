@@ -24,11 +24,25 @@ echo "==> Syncing files..."
 rsync -avz --exclude node_modules --exclude .next --exclude out --exclude .git \
   ./ $USER@$VPS_IP:/opt/mls-photo-tools/
 
-# 3. Build and start on VPS
+# 3. Set up admin credentials on VPS if not already configured
+ssh $USER@$VPS_IP 'cd /opt/mls-photo-tools && if [ ! -f .env ]; then
+  read -p "Admin username [admin]: " ADMIN_USER
+  ADMIN_USER=${ADMIN_USER:-admin}
+  read -sp "Admin password: " ADMIN_PASS
+  echo
+  echo "ADMIN_USER=$ADMIN_USER" > .env
+  echo "ADMIN_PASS=$ADMIN_PASS" >> .env
+  chmod 600 .env
+  echo "Admin credentials saved to .env"
+else
+  echo "Admin credentials already configured in .env"
+fi'
+
+# 4. Build and start on VPS
 echo "==> Building and starting..."
 ssh $USER@$VPS_IP 'cd /opt/mls-photo-tools && docker compose up -d --build'
 
-# 4. Optional: Set up SSL with Caddy reverse proxy
+# 5. Optional: Set up SSL with Caddy reverse proxy
 if [ -n "$DOMAIN" ]; then
   echo "==> Setting up SSL with Caddy for $DOMAIN..."
   ssh $USER@$VPS_IP bash -s "$DOMAIN" << 'REMOTE'

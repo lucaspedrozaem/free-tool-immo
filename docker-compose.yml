@@ -3,4 +3,7 @@ services:
     build: .
     ports:
       - "80:80"
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASS=${ADMIN_PASS:?Set ADMIN_PASS in .env or environment}
     restart: unless-stopped
